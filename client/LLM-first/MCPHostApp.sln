@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCPHostApp", "MCPHostApp.csproj", "{5370F85D-FF64-C1E9-B22F-DFE3F4568961}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5370F85D-FF64-C1E9-B22F-DFE3F4568961}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5370F85D-FF64-C1E9-B22F-DFE3F4568961}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5370F85D-FF64-C1E9-B22F-DFE3F4568961}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5370F85D-FF64-C1E9-B22F-DFE3F4568961}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B8526820-54FA-4A57-A9CE-1459E59FC9DC}
+	EndGlobalSection
+EndGlobal
