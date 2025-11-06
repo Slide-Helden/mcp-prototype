@@ -36,7 +36,10 @@ public static class TimeResources
         MimeType = "text/markdown",
         UriTemplate = "time/about")]
     [Description("Liefert eine kurze Markdown-Beschreibung, wie Tools, Prompts und Ressourcen zusammenspielen.")]
-    public static string About() =>
+    public static string About()
+    {
+
+        return
         """
         # MCP Zeit-Demo
 
@@ -48,6 +51,7 @@ public static class TimeResources
 
         Kombiniere alle drei Bausteine, um Antworten konsistent und ueberpruefbar zu machen.
         """;
+    }
 
     [McpServerResource(
         Name = "time.cities",
