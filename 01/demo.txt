@@ -6,12 +6,14 @@ Vorbereitung:
 - Debugger an den Client-Prozess anhaengen.
 
 Befehle im Client-REPL:
+0. :read time/about
 1. :tools
-2. Freier Prompt: "Nutze das Tool time.now und gib mir die aktuelle Uhrzeit in UTC."
-3. :resources
-4. :read time/about
-5. :prompts
-6. :prompt time.prepare_response {"timezone":"Europe/Berlin","request":"Plane einen Meeting-Vorschlag"}
-7. Freier Prompt: "Welche Tools stehen dir zur Verfuegung?"
+2. Freier Prompt: "Welche Tools stehen dir zur Verfuegung?"
+3. Freier Prompt: "Nutze das Tool time.now und gib mir die aktuelle Uhrzeit in UTC."
+4. :resources
+5. Freier Prompt: "Liste alle Ressourcen auf und entscheide, welche fuer die Aufgabe nuetzlich sind."
+7. :prompts
+8. Freier Prompt: "Welche Prompts bietet der Server an und welchen wuerdest du fuer eine Meeting-Vorbereitung nutzen?"
+9. :prompt time.prepare_response {"timezone":"Europe/Berlin","request":"Plane einen Meeting-Vorschlag"}
 
 Damit werden alle MCP-Aufrufe angesprungen und Breakpoints ausgeloest.
