@@ -32,11 +32,11 @@ jobs:
 
     - name: Restore dependencies doc client
       run: dotnet restore
-      working-directory: ./02/client/AI-first/
+      working-directory: ./02/client/LLM-first/
 
     - name: Build doc client
       run: dotnet publish --no-restore
-      working-directory: ./02/client/AI-first/
+      working-directory: ./02/client/LLM-first/
 
     - name: Restore dependencies server
       run: dotnet restore
@@ -53,3 +53,19 @@ jobs:
     - name: Build doc server
       run: dotnet publish --no-restore
       working-directory: ./02/server/DocServer
+
+    - name: Restore dependencies operator client
+      run: dotnet restore
+      working-directory: ./03/client/Orchestrator-first/
+
+    - name: Build operator client
+      run: dotnet publish --no-restore
+      working-directory: ./03/client/Orchestrator-first/
+
+    - name: Restore dependencies operator server
+      run: dotnet restore
+      working-directory: ./03/server/OperatorServer
+
+    - name: Build operator server
+      run: dotnet publish --no-restore
+      working-directory: ./03/server/OperatorServer

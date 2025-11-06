@@ -2,7 +2,7 @@ Dokumenten-Demo (02) – Ablauf
 =============================
 
 Vorbereitung:
-- Server (DocServer) starten, danach Client (`dotnet run` in 02/client/AI-first).
+- Server (DocServer) starten, danach Client (`dotnet run` in 02/client/LLM-first).
 - Optional Debug-Ausgabe löschen (Terminal freimachen), damit die Schritte klar sichtbar sind.
 
 Befehlsabfolge im Client-REPL:
