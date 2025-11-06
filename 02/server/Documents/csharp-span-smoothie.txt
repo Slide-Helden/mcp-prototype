@@ -1,0 +1,9 @@
+Span Smoothie Bar
+tags: csharp, span, performance
+
+Our office smoothie bar is powered by Span<T>.
+We slice fruit without allocation, blend with deterministic latency,
+and pipeline the toppings straight into ReadOnlySpan garnish.
+
+Visitors ask if that's overkill for breakfast.
+We answer, "Once you've optimized char arrays, you optimize everything."

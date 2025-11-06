@@ -1,0 +1,10 @@
+Oracle Fee Schedule
+tags: java, oracle, joke
+
+Our finance team asked why the Java line item says:
+"1 x Hello World = 3 support credits."
+
+Apparently every time you brew a new cup of coffee,
+Oracle classifies it as a production deployment.
+
+The C# team just bought a moka pot and called it `new CoffeeService()`.

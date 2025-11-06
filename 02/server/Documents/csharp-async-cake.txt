@@ -1,0 +1,8 @@
+Async Cake Day
+tags: csharp, async, celebration
+
+Our C# team celebrates birthdays with async/await cake.
+We start baking, `await` the timer, and no thread is blocked from eating frosting.
+
+The Java team tried to copy it.
+They opened three new threads, forgot to join them, and now pay Oracle a licensing fee for the sprinkles.

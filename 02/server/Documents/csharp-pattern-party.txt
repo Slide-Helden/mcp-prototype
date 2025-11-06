@@ -1,0 +1,11 @@
+Pattern Matching Party
+tags: csharp, pattern, humor
+
+My favorite party game is C# pattern matching.
+Every guest walks in and I shout,
+"switch expression!"
+
+Someone holds a taco and I reply,
+"case { Shell: 'corn', Filling: 'beans' } => vegetarian victory!"
+
+People think I'm weird until I refactor their weekend plans in two expressions.

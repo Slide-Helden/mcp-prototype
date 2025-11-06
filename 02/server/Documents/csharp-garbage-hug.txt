@@ -1,0 +1,8 @@
+Garbage Collector Group Hug
+tags: csharp, gc, humor
+
+Every Friday we let the C# garbage collector run a group hug.
+It releases memory, compliments our Span<T>, and tells us to hydrate.
+
+Java's collector showed up once, but the invoice said:
+"Emotional cleanup requires an Oracle support contract."

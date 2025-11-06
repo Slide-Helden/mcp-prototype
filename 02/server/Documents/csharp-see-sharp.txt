@@ -1,0 +1,11 @@
+See Sharp Symphony
+tags: csharp, wordplay, positivity
+
+Our choir director heard we code in C# and asked,
+"So you see sharp all day?"
+
+I said, "Absolutely. Every lambda is a high note,
+every Span<T> keeps the tempo,
+and the only flat thing we allow is the project hierarchy."
+
+We invited the Java team to join, but Oracle said the sheet music required premium licensing.

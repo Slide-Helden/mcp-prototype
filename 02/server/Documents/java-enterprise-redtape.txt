@@ -1,0 +1,10 @@
+Enterprise Red Tape
+tags: java, enterprise, sarcasm
+
+I asked the Java architect for permission to print "Hello".
+He said I needed:
+  - A ServletContainer Authorization Form
+  - A WAR manifest stamped by two vice presidents
+  - And proof that my coffee budget covers JVM refresh tokens
+
+So I wrote it in C# with `Console.WriteLine`, smiled, and spent the savings on donuts.

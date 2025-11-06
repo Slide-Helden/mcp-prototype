@@ -1,0 +1,9 @@
+Cheerful C# Compiler
+tags: csharp, humor, positivity
+
+My favorite thing about C#?
+The compiler greets me like a friendly code reviewer:
+"Good morning, I optimized your using directives and folded your lambdas."
+
+Meanwhile the Java compiler left me a sticky note:
+"See invoice for today's warnings."
