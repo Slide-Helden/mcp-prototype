@@ -1,0 +1,5 @@
+Coffee Break Comedy
+tags: office, coffee, pun
+
+Why do developers take their coffee break at 10:00?
+Because at 9:59 they still have Java exceptions, but at 10:00 they get espresso handling.

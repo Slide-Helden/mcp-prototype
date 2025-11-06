@@ -30,6 +30,14 @@ jobs:
       run: dotnet publish --no-restore
       working-directory: ./01/client/LLM-first/
 
+    - name: Restore dependencies doc client
+      run: dotnet restore
+      working-directory: ./02/client/AI-first/
+
+    - name: Build doc client
+      run: dotnet publish --no-restore
+      working-directory: ./02/client/AI-first/
+
     - name: Restore dependencies server
       run: dotnet restore
       working-directory: ./01/server/McpTimeServer
@@ -37,3 +45,11 @@ jobs:
     - name: Build server
       run: dotnet publish --no-restore
       working-directory: ./01/server/McpTimeServer
+
+    - name: Restore dependencies doc server
+      run: dotnet restore
+      working-directory: ./02/server/DocServer
+
+    - name: Build doc server
+      run: dotnet publish --no-restore
+      working-directory: ./02/server/DocServer
