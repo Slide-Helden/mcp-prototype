@@ -1,32 +1,23 @@
-Dokumenten-Demo (02) – Ablauf
+Dokumenten-Demo (02) - Ablauf
 =============================
 
 Vorbereitung:
-- Server (DocServer) starten, danach Client (`dotnet run` in 02/client/LLM-first).
-- Optional Debug-Ausgabe löschen (Terminal freimachen), damit die Schritte klar sichtbar sind.
+- Server (DocServer) starten, danach Client (`dotnet run` in 02/client).
+- Optional Terminal leeren, damit die Schritte klar sichtbar sind.
 
 Befehlsabfolge im Client-REPL:
 1. :tools
 2. :prompts
 3. :resources
 4. :read docs/catalog
-
 5. Freier Prompt: "Finde einen Witz ohne Vorgaben. Nutze deine Tools und nenne die Quelle."
 6. :prompt docs.find_humor {"topic":"coffee"}
 7. :read docs/document/coffee-break
-
 8. Freier Prompt: "Nutze docs.search nach \"coffee\", lies alle gefundenen Ressourcen (docs/document/{id}) vor und rezitiere die Witze mit Quellenangabe."
 9. Freier Prompt: "Erstelle eine Zusammenfassung des gelesenen Witzes mit Quelle."
 10. :prompt docs.summarize_document {"documentId":"standup"}
 11. :read docs/document/standup
 12. Freier Prompt: "Vergleiche die beiden Witze und schlage den passenden fuer ein Remote-Meeting vor."
 13. Freier Prompt: "Nutze docs.random, um mir einen weiteren Zufallswitz inkl. Quelle zu empfehlen."
-
-
-14. Freier Prompt: "Erstelle eine Zusammenfassung des gelesenen Witzes mit Quelle."
-15. :prompt docs.summarize_document {"documentId":"standup"}
-16. :read docs/document/standup
-17. Freier Prompt: "Vergleiche die beiden Witze und schlage den passenden fuer ein Remote-Meeting vor."
-18. Freier Prompt: "Nutze docs.random, um mir einen weiteren Zufallswitz inkl. Quelle zu empfehlen."
 
 Hinweis: Die freien Prompts koennen variiert werden, wichtig ist, dass der Agent Tools, Prompts und Ressourcen nutzt und Quellen zitiert.

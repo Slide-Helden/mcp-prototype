@@ -3,16 +3,15 @@ Breakpoint Demo Ablauf (01)
 
 Vorbereitung:
 - Breakpoints in den Client-Methoden setzen (z. B. mcp.list_resources, mcp.read_resource, mcp.list_prompts, mcp.get_prompt).
-- Debugger an den Client-Prozess anhängen.
+- Debugger an den Client-Prozess anhaengen.
 
 Befehle im Client-REPL:
 1. :tools
-2.1 Freier Prompt: "Sag mir die aktuelle Uhrzeit in UTC."
-2.2 Freier Prompt: "Nutze das Tool time.now und sag mir die aktuelle Uhrzeit in UTC."
+2. Freier Prompt: "Nutze das Tool time.now und gib mir die aktuelle Uhrzeit in UTC."
 3. :resources
 4. :read time/about
 5. :prompts
 6. :prompt time.prepare_response {"timezone":"Europe/Berlin","request":"Plane einen Meeting-Vorschlag"}
-7. Freier Prompt: "Welche Tools stehen dir zur Verfügung?"
+7. Freier Prompt: "Welche Tools stehen dir zur Verfuegung?"
 
-Damit werden alle MCP-Aufrufe angesprungen und Breakpoints ausgelöst.
+Damit werden alle MCP-Aufrufe angesprungen und Breakpoints ausgeloest.
