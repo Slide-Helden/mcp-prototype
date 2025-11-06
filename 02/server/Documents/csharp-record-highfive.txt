@@ -1,0 +1,11 @@
+Record High-Five
+tags: csharp, record, humor
+
+I introduced records to the team and now we greet each other like:
+"record StandupNote(string Mood, string CoffeeLevel);"
+
+Our retrospectives sound like:
+"with { Mood = \"sunny\" }"
+
+HR overheard us and asked if we always speak in immutable compliments.
+Absolutely. Nothing says teamwork like a with-expression high-five.

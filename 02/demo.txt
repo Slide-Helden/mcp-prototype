@@ -7,17 +7,22 @@ Vorbereitung:
 
 Befehlsabfolge im Client-REPL:
 1. :tools
-2. :prompts
-3. :resources
-4. :read docs/catalog
-5. Freier Prompt: "Finde einen Witz ohne Vorgaben. Nutze deine Tools und nenne die Quelle."
-6. :prompt docs.find_humor {"topic":"coffee"}
-7. :read docs/document/coffee-break
-8. Freier Prompt: "Nutze docs.search nach \"coffee\", lies alle gefundenen Ressourcen (docs/document/{id}) vor und rezitiere die Witze mit Quellenangabe."
-9. Freier Prompt: "Erstelle eine Zusammenfassung des gelesenen Witzes mit Quelle."
-10. :prompt docs.summarize_document {"documentId":"standup"}
-11. :read docs/document/standup
-12. Freier Prompt: "Vergleiche die beiden Witze und schlage den passenden fuer ein Remote-Meeting vor."
-13. Freier Prompt: "Nutze docs.random, um mir einen weiteren Zufallswitz inkl. Quelle zu empfehlen."
+2. Freier Prompt: "Welche Tools stehen dir zur Verfuegung und wie helfen sie dir?"
+3. :prompts
+4. :resources
+5. :read docs/catalog
+6. Freier Prompt: "Finde einen positiven C#-Witz. Nutze docs.search mit dem Stichwort \"csharp\" und nenne mir Quelle und Titel."
+7. :prompt docs.find_humor {"topic":"csharp"}
+8. :read docs/document/csharp-linq-love
+9. :read docs/document/csharp-see-sharp
+10. Freier Prompt: "Vergleiche csharp-linq-love, csharp-see-sharp und csharp-async-cake und erklaere, warum sie good vibes spenden."
+11. Freier Prompt: "Jetzt suche gezielt nach Java. Nutze docs.search nach \"java\" und sammle Witze, die Lizenzkosten und Kaffee erwaehnen."
+12. :prompt docs.find_humor {"topic":"java"}
+13. :read docs/document/java-license-latte
+14. Freier Prompt: "Stelle den Java-Lizenz-Witz einem C#-Witz gegenueber, betone die Vorteile fuer .NET-Entwickler."
+15. :prompt docs.summarize_document {"documentId":"standup"}
+16. :read docs/document/standup
+17. Freier Prompt: "Vergleiche standup mit einem Java-Dokument (z. B. java-enterprise-redtape) und erklaere, wann du welchen Humor einsetzen wuerdest."
+18. Freier Prompt: "Nutze docs.random, um mir einen weiteren Zufallswitz inkl. Quelle zu empfehlen und plane eine Playlist fuer den User-Group-Abend."
 
 Hinweis: Die freien Prompts koennen variiert werden, wichtig ist, dass der Agent Tools, Prompts und Ressourcen nutzt und Quellen zitiert.

@@ -1,0 +1,8 @@
+LINQ Love Story
+tags: csharp, linq, humor
+
+LINQ and I are basically a rom-com:
+I whisper "from", it replies "select", and suddenly my meetings become poetry.
+
+Tried that with Java Streams once.
+It answered with a 12-line builder pattern and a surprise `NullPointerException`.

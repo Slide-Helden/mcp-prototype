@@ -1,0 +1,9 @@
+Java License Latte
+tags: java, license, humor
+
+Java developer walks into a cafe.
+Barista: "Latte or Cappuccino?"
+Dev: "What's cheaper?"
+Barista: "Depends... are you brewing with Oracle or open source beans?"
+
+He ordered water; the licensing team still sent an invoice titled "Hot Beverage Runtime Fee."
