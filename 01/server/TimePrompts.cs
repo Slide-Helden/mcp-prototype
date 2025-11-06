@@ -1,7 +1,6 @@
-using System.Collections.Generic;
-using System.ComponentModel;
 using Microsoft.Extensions.AI;
 using ModelContextProtocol.Server;
+using System.ComponentModel;
 
 namespace McpTimeServer;
 

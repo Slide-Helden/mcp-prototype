@@ -19,5 +19,4 @@ app.MapMcp();
 // einfache Info-Route
 app.MapGet("/health", () => Results.Ok(new { status = "ok", sse = "/sse" }));
 
-
 app.Run();

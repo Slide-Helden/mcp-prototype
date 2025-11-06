@@ -1,10 +1,8 @@
-using System.Collections.Generic;
+using ModelContextProtocol.Server;
 using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
-using ModelContextProtocol.Server;
 
 namespace McpTimeServer;
 
@@ -38,7 +36,6 @@ public static class TimeResources
     [Description("Liefert eine kurze Markdown-Beschreibung, wie Tools, Prompts und Ressourcen zusammenspielen.")]
     public static string About()
     {
-
         return
         """
         # MCP Zeit-Demo
