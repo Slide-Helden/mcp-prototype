@@ -1,0 +1,18 @@
+Operator-gefuehrte Demo (03)
+===========================
+
+Ziel: Zeige die Gegenueberstellung zum LLM-first Ansatz. Hier steht der Operator im Mittelpunkt (Orchestrator-first): Er waehlt jede MCP-Aktion bewusst, sammelt Inhalte und ruft erst am Ende das LLM auf.
+
+Vorbereitung:
+- Server starten: `dotnet run` in `03/server`
+- Client starten: `dotnet run` in `03/client`
+
+Ablauf im Menue:
+1. Option 1 "Liste Katalog" -> Ueberblick verschaffen, welche Dokumente existieren.
+2. Option 2 "Suche per Tool" -> Suchbegriff `coffee` eingeben (demonstriert manuellen Tool-Call).
+3. Option 3 "Dokument lesen" -> ID `manual-coffee` lesen, Text inspizieren.
+4. Option 3 erneut -> ID `manual-standup` lesen, Text ebenfalls hinzufuegen.
+5. Option 4 "Gesammelte Dokumente anzeigen" -> pruefen, was im Zwischenspeicher liegt.
+6. Option 5 "Zusammenfassung per LLM" -> erzeugt erst jetzt eine Antwort, basierend auf den zuvor manuell gesammelten Ressourcen.
+
+Hinweis: Zwischen den Schritten kann der Operator freie Kommentare geben (z. B. Moderation fuer das Publikum), das System ruft jedoch keine Tools automatisch auf.

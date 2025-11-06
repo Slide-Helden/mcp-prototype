@@ -1,0 +1,5 @@
+Manual Standup Laugh
+tags: standup, meeting
+
+Scrum master says: "Any blockers?"
+Operator replies: "Only the AI, if I let it speak first."

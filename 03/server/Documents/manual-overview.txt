@@ -1,0 +1,6 @@
+Operator Session Overview
+tags: guide, operator
+
+This note reminds the presenter to steer the session manually.
+Use the catalog to pick documents.
+Call tools on demand and copy snippets into your own summary.

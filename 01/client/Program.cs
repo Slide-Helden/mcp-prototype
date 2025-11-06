@@ -54,6 +54,14 @@ Console.WriteLine();
 // 3a) Echte Server-Tools
 IList<McpClientTool> serverTools = await mcpClient.ListToolsAsync();
 
+var serverPrompts = await mcpClient.ListPromptsAsync();
+var directResources = await mcpClient.ListResourcesAsync();
+var resourceTemplates = await mcpClient.ListResourceTemplatesAsync();
+
+Console.WriteLine($"[MCP] Server liefert {serverTools.Count} Tool(s), {serverPrompts.Count} Prompt(s) und {directResources.Count} Resource(s) (+ {resourceTemplates.Count} Template(s)).");
+Console.WriteLine("      Nutze :prompts, :resources, :prompt <name> oder :read <uri> für einen schnellen Einstieg.");
+Console.WriteLine();
+
 // 3b) Synthetische Client-Tools, die intern den MCP-Client nutzen
 //     -> LLM kann selbstständig Ressourcen & Prompts entdecken/lesen
 

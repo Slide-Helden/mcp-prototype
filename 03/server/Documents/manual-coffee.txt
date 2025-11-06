@@ -1,0 +1,5 @@
+Manual Coffee Humor
+tags: coffee, humor
+
+Coffee debugging tip:
+If at first you do not succeed, pour another cup and rerun the test manually.

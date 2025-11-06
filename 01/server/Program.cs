@@ -7,7 +7,9 @@ builder.WebHost.UseUrls(
 builder.Services
     .AddMcpServer()
     .WithHttpTransport()
-    .WithToolsFromAssembly();
+    .WithToolsFromAssembly()
+    .WithPromptsFromAssembly()
+    .WithResourcesFromAssembly();
 
 var app = builder.Build();
 
@@ -16,6 +18,5 @@ app.MapMcp();
 
 // einfache Info-Route
 app.MapGet("/health", () => Results.Ok(new { status = "ok", sse = "/sse" }));
-
 
 app.Run();
