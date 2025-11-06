@@ -24,16 +24,16 @@ jobs:
 
     - name: Restore dependencies client
       run: dotnet restore
-      working-directory: ./client/LLM-first/
+      working-directory: ./01/client/LLM-first/
 
     - name: Build client
       run: dotnet publish --no-restore
-      working-directory: ./client/LLM-first/
+      working-directory: ./01/client/LLM-first/
 
     - name: Restore dependencies server
       run: dotnet restore
-      working-directory: ./server/McpTimeServer
+      working-directory: ./01/server/McpTimeServer
 
     - name: Build server
       run: dotnet publish --no-restore
-      working-directory: ./server/McpTimeServer
+      working-directory: ./01/server/McpTimeServer
