@@ -17,9 +17,20 @@ using AIFunction = Microsoft.Extensions.AI.AIFunction;
 
 // ---------- 1) Chat-Client (Ollama / OpenAI kompatibel) ----------
 
-var endpoint = Environment.GetEnvironmentVariable("OLLAMA_OPENAI_ENDPOINT") ?? "http://localhost:11434/v1";
-var modelId = Environment.GetEnvironmentVariable("OLLAMA_MODEL") ?? "gpt-oss:20b";
-var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY") ?? "ollama";
+/*
+    //cloud beispiel    
+
+    var endpoint = Environment.GetEnvironmentVariable("OLLAMA_OPENAI_ENDPOINT");
+    var modelId = Environment.GetEnvironmentVariable("OLLAMA_MODEL");
+    var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+*/
+ 
+
+// lokales beispiel
+
+var endpoint = "http://localhost:11434/v1";
+var modelId = "gpt-oss:20b";
+var apiKey = "ollama";
 
 IChatClient chat =
     new ChatClientBuilder(
@@ -37,7 +48,7 @@ Console.WriteLine();
 
 // ---------- 2) MCP-Client zum Dokumenten-Server ----------
 
-var url = Environment.GetEnvironmentVariable("MCP_SERVER_URL") ?? "http://localhost:5200/sse";
+var url = "http://localhost:5200/sse";
 IMcpClient mcpClient = await McpClientFactory.CreateAsync(
     new SseClientTransport(new()
     {
