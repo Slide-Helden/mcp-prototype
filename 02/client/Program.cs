@@ -1,4 +1,4 @@
-// Program.cs - LLM-first Document Demo (C# 12 / .NET 9)
+// Program.cs - LLM-first Document Demo (C# 12 / .NET 10)
 // NuGet: Microsoft.Extensions.AI, Microsoft.Extensions.AI.OpenAI, ModelContextProtocol
 
 using Microsoft.Extensions.AI;

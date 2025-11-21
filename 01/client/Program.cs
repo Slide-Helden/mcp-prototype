@@ -1,4 +1,4 @@
-﻿// Program.cs – LLM-first Edition (C# 12 / .NET 8)
+// Program.cs – LLM-first Edition (C# 12 / .NET 10)
 // NuGet: Microsoft.Extensions.AI, Microsoft.Extensions.AI.OpenAI (prerelease), ModelContextProtocol (prerelease)
 
 using Microsoft.Extensions.AI;

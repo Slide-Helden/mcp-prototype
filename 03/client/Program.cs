@@ -1,4 +1,4 @@
-// Program.cs - Orchestrator-first MCP Demo (C# 12 / .NET 9)
+// Program.cs - Orchestrator-first MCP Demo (C# 12 / .NET 10)
 
 using Microsoft.Extensions.AI;
 using ModelContextProtocol;

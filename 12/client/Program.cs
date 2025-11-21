@@ -1,4 +1,4 @@
-// OpsConsole - MCP Demo ohne KI (C# 12 / .NET 9)
+// OpsConsole - MCP Demo ohne KI (C# 12 / .NET 10)
 
 using Microsoft.Extensions.AI;
 using ModelContextProtocol;
