@@ -1,7 +1,9 @@
 // TraceConsole - MCP request/response Beobachtung (kein LLM)
 
+using Microsoft.Extensions.AI;
 using ModelContextProtocol;
 using ModelContextProtocol.Client;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 
@@ -106,10 +108,10 @@ static string ExtractText(IEnumerable<AIContent> content)
     }
     if (sb.Length > 0) return sb.ToString();
 
-    // Fallback: falls JSON-Content als Objekt kommt
-    foreach (var obj in content.OfType<ObjectContent>())
+    // Fallback: serialisiere verbleibende Inhalte (z. B. Objekte) als JSON
+    foreach (var item in content)
     {
-        sb.AppendLine(JsonSerializer.Serialize(obj.Value, new JsonSerializerOptions { WriteIndented = true }));
+        sb.AppendLine(JsonSerializer.Serialize(item, new JsonSerializerOptions { WriteIndented = true }));
     }
     return sb.ToString();
 }
