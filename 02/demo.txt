@@ -1,28 +1,33 @@
-Dokumenten-Demo (02) - Ablauf
-=============================
+Dokumenten-Demo (02) - LLM-first Ablauf
+=======================================
+
+Ziel: Das LLM Führt den Ablauf, nutzt Tools/Prompts/Resources eigenstaendig und zitiert Quellen.
 
 Vorbereitung:
-- Server (DocServer) starten, danach Client (`dotnet run` in 02/client).
-- Optional Terminal leeren, damit die Schritte klar sichtbar sind.
+- Server (DocServer) starten: `dotnet run` in `02/server`
+- Client starten: `dotnet run` in `02/client`
 
-Befehlsabfolge im Client-REPL:
-1. :tools
-2. Freier Prompt: "Welche Tools stehen dir zur Verfuegung und wie helfen sie dir?"
-3. :prompts
-4. :resources
-5. :read docs/catalog
-6. Freier Prompt: "Finde einen positiven C#-Witz. Nutze docs.search mit dem Stichwort \"csharp\" und nenne mir Quelle und Titel."
-7. :prompt docs.find_humor {"topic":"csharp"}
-8. :read docs/document/csharp-linq-love
-9. :read docs/document/csharp-see-sharp
-10. Freier Prompt: "Vergleiche csharp-linq-love, csharp-see-sharp und csharp-async-cake und erklaere, warum sie good vibes spenden."
-11. Freier Prompt: "Jetzt suche gezielt nach Java. Nutze docs.search nach \"java\" und sammle Witze, die Lizenzkosten und Kaffee erwaehnen."
-12. :prompt docs.find_humor {"topic":"java"}
-13. :read docs/document/java-license-latte
-14. Freier Prompt: "Stelle den Java-Lizenz-Witz einem C#-Witz gegenueber, betone die Vorteile fuer .NET-Entwickler."
-15. :prompt docs.summarize_document {"documentId":"standup"}
-16. :read docs/document/standup
-17. Freier Prompt: "Vergleiche standup mit einem Java-Dokument (z. B. java-enterprise-redtape) und erklaere, wann du welchen Humor einsetzen wuerdest."
-18. Freier Prompt: "Nutze docs.random, um mir einen weiteren Zufallswitz inkl. Quelle zu empfehlen und plane eine Playlist fuer den User-Group-Abend."
+LLM-first Abfolge (nur freie Prompts, keine `:`-Kommandos):
+1. Freier Prompt: "Welche Tools, Prompts und Ressourcen stellt der Dokumentenserver bereit? Beschreibe kurz, wie du damit passende Witze findest und Quellen zitierst."
+2. Freier Prompt: "Finde einen positiven C#-Witz. Nutze die Suche (docs.search mit keyword \"csharp\"), lies das beste Dokument via read_resource docs/document/{id} und nenne Quelle und Titel."
+3. Freier Prompt: "Vergleiche die Dokumente csharp-linq-love, csharp-see-sharp und csharp-async-cake. Lies alle drei, erkläre, warum sie good vibes spenden, und zitiere die Quellen."
+4. Freier Prompt: "Suche gezielt nach Java (Lizenzkosten und Kaffee). Nutze docs.search, lies die relevanten Dokumente und fuehre Quellen (docs/document/{id}) an."
+5. Freier Prompt: "Fasse das Dokument standup in drei Stichpunkten zusammen. Lies dazu docs/document/standup und nenne die Quelle."
+6. Freier Prompt: "Empfiehl einen weiteren Zufallswitz mit docs.random, nenne die Quelle und begruende kurz die Wahl."
+7. Freier Prompt: "Meta: erkläre, welche MCP-Bausteine (Tools, Prompts, Resources) du genutzt hast und warum."
 
-Hinweis: Die freien Prompts koennen variiert werden, wichtig ist, dass der Agent Tools, Prompts und Ressourcen nutzt und Quellen zitiert.
+überleitung zu 03 - Orchestrator-first (optional)
+- Die folgenden `:`-Kommandos sind Orchestrator-first (operator-gesteuert). In Ordner 03 wird dieser Ansatz voll umgesetzt.
+
+Orchestrator-first (optional): manuelle Befehle
+- :tools
+- :prompts
+- :resources
+- :read docs/catalog
+- :prompt docs.find_humor {"topic":"csharp"}
+- :read docs/document/csharp-linq-love
+- :read docs/document/csharp-see-sharp
+- :read docs/document/csharp-async-cake
+- :prompt docs.summarize_document {"documentId":"standup"}
+- :read docs/document/standup
+
