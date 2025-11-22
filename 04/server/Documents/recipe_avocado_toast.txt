@@ -1,0 +1,15 @@
+Titel: Avocado Toast
+Kategorie: Frühstück
+Tags: vegetarisch, schnell, frühstück, snack
+Zutaten:
+- 2 Scheiben Brot
+- 1 reife Avocado
+- Salz, Pfeffer
+- Chiliflocken
+- Zitronensaft
+Zubereitung:
+1. Avocado zerdrücken und mit Salz, Pfeffer und Zitrone würzen.
+2. Brot toasten.
+3. Avocado darauf verteilen und mit Chili bestreuen.
+Hinweise:
+- Optional: Spiegelei oder Tomaten hinzufügen.
