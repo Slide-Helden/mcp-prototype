@@ -143,13 +143,16 @@ mcpClient.RegisterNotificationHandler("notifications/resources/updated",
 var history = new List<AIChatMessage>
 {
     new(AIChatRole.System,
-        "Du bist ein kulinarischer Assistent. " +
-        "Zuerst prüfst du die Rezeptsammlung über mcp.list_resources oder docs/catalog. " +
-        "Nutze docs.search, um Rezepte basierend auf Zutaten oder Wünschen zu finden. " +
-        "Lies immer den Volltext über docs/document/{id}, bevor du Kochanweisungen gibst. " +
-        "Sei freundlich, ermutigend und präzise bei Mengenangaben.")
+        "Du bist ein kulinarischer Assistent. Deine Datenquelle ist ein Dokumenten-Server." +
+        "WICHTIG - BEFOLGE DIESEN PROZESS:" +
+        "1. Um zu wissen, welche Rezepte existieren, MÜSST du zuerst die Resource 'docs/catalog' lesen (nutze mcp.read_resource)." +
+        "2. Du erhältst eine Liste von Dokumenten mit IDs." +
+        "3. WENN der Nutzer nach einem Rezept fragt (z.B. 'Nudeln'), suche die passende ID aus dem Katalog." +
+        "4. Lade den Text des Rezepts, indem du die ID in das Template einsetzt: 'docs/document/{id}'." +
+        "   BEISPIEL: Wenn ID='gnocchi' ist, rufe 'mcp.read_resource' mit 'docs/document/gnocchi' auf." +
+        "5. Gib erst dann die Kochanweisungen." +
+        "Sage niemals, dass du den Text nicht hast, ohne diesen Prozess probiert zu haben.")
 };
-
 PrintHelp();
 
 while (true)
