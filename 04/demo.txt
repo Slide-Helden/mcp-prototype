@@ -1,28 +1,41 @@
-Dokumenten-Demo (02) - Ablauf
-=============================
+Rezept-Demo (04) - Ablauf
+=========================
 
 Vorbereitung:
-- Server (DocServer) starten, danach Client (`dotnet run` in 02/client).
-- Optional Terminal leeren, damit die Schritte klar sichtbar sind.
+- Server (DocServer) starten, danach Client (`dotnet run` in DocHostApp).
+- Sicherstellen, dass Rezept-Dateien (z.B. Gnocchi.txt, Tomatensuppe.txt) im Ordner "Documents" liegen.
 
 Befehlsabfolge im Client-REPL:
-1. :tools
-2. Freier Prompt: "Welche Tools stehen dir zur Verfuegung und wie helfen sie dir?"
-3. :prompts
-4. :resources
-5. :read docs/catalog
-6. Freier Prompt: "Finde einen positiven C#-Witz. Nutze docs.search mit dem Stichwort \"csharp\" und nenne mir Quelle und Titel."
-7. :prompt docs.find_humor {"topic":"csharp"}
-8. :read docs/document/csharp-linq-love
-9. :read docs/document/csharp-see-sharp
-10. Freier Prompt: "Vergleiche csharp-linq-love, csharp-see-sharp und csharp-async-cake und erklaere, warum sie good vibes spenden."
-11. Freier Prompt: "Jetzt suche gezielt nach Java. Nutze docs.search nach \"java\" und sammle Witze, die Lizenzkosten und Kaffee erwaehnen."
-12. :prompt docs.find_humor {"topic":"java"}
-13. :read docs/document/java-license-latte
-14. Freier Prompt: "Stelle den Java-Lizenz-Witz einem C#-Witz gegenueber, betone die Vorteile fuer .NET-Entwickler."
-15. :prompt docs.summarize_document {"documentId":"standup"}
-16. :read docs/document/standup
-17. Freier Prompt: "Vergleiche standup mit einem Java-Dokument (z. B. java-enterprise-redtape) und erklaere, wann du welchen Humor einsetzen wuerdest."
-18. Freier Prompt: "Nutze docs.random, um mir einen weiteren Zufallswitz inkl. Quelle zu empfehlen und plane eine Playlist fuer den User-Group-Abend."
 
-Hinweis: Die freien Prompts koennen variiert werden, wichtig ist, dass der Agent Tools, Prompts und Ressourcen nutzt und Quellen zitiert.
+1. System-Check
+   ----------------
+   1. :tools
+   2. :resources
+   3. Freier Prompt: "Hallo! Wer bist du und wie kannst du mir beim Kochen helfen?"
+      (Prüft, ob die "Koch-Persona" (System Prompt) korrekt geladen ist.)
+
+2. Die Katalog-Methode
+   --------------------------------------
+   4. :read docs/catalog
+   5. Freier Prompt: "Ich möchte Nudeln essen. Schau in deinen Katalog und sag mir, welche Rezepte dazu passen."
+
+3. Detail-Abruf & Anleitung
+   ------------------------
+   6. Freier Prompt: "Das klingt gut. Wie mache ich die Gnocchi? Lies das Rezept und leite mich an."
+   7. :read docs/document/recipe_gnocchi_pesto_genovese
+
+4. Der "Kühlschrank-Test" (Inferenz)
+   ---------------------------------
+   8. Freier Prompt: "Ich habe noch Sahne und Eier übrig. Welches Rezept aus deiner Liste könnte ich damit kochen?"
+
+5. Vergleich & Analyse (Multi-File)
+   --------------------------------
+   9. Freier Prompt: "Ich schwanke zwischen den Gnocchi und der Tomatensuppe. Welches Gericht hat weniger Zutaten?"
+
+6. Kontext & Gedächtnis
+   --------------------
+   10. Freier Prompt: "Erstelle mir eine Einkaufsliste für die Gnocchi, aber rechne die Mengen für die doppelte Personenanzahl hoch."
+
+7. Negative Tests (Halluzination vermeiden)
+   ----------------------------------------
+   11. Freier Prompt: "Wie mache ich Sushi?"
