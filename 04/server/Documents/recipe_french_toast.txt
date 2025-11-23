@@ -1,0 +1,15 @@
+Titel: French Toast
+Kategorie: Frühstück
+Tags: süß, frühstück, klassisch
+Zutaten:
+- 2 Scheiben Toastbrot
+- 1 Ei
+- 80 ml Milch
+- 1 EL Zucker
+- Butter
+Zubereitung:
+1. Ei, Milch und Zucker verrühren.
+2. Toast darin wenden.
+3. In Butter goldbraun ausbacken.
+Hinweise:
+- Mit Beeren und Ahornsirup servieren.

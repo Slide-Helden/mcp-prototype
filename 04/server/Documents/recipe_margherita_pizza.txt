@@ -1,0 +1,16 @@
+Titel: Pizza Margherita
+Kategorie: Pizza
+Tags: italienisch, vegetarisch, klassisch
+Zutaten:
+- Pizzateig
+- Passierte Tomaten
+- Mozzarella
+- Basilikum
+- Salz, Olivenöl
+Zubereitung:
+1. Teig ausrollen und mit Tomatensauce bestreichen.
+2. Mozzarella auflegen.
+3. Bei 250°C 10–12 Minuten backen.
+4. Mit Basilikum garnieren.
+Hinweise:
+- Tomatensauce mit Salz und etwas Zucker abschmecken.
