@@ -101,3 +101,35 @@ jobs:
     - name: Build trace server (demo 13)
       run: dotnet publish --no-restore
       working-directory: ./13/server/
+
+    - name: Restore dependencies testplan client (demo 14)
+      run: dotnet restore
+      working-directory: ./14/client/
+
+    - name: Build testplan client (demo 14)
+      run: dotnet publish --no-restore
+      working-directory: ./14/client/
+
+    - name: Restore dependencies testplan server (demo 14)
+      run: dotnet restore
+      working-directory: ./14/server/
+
+    - name: Build testplan server (demo 14)
+      run: dotnet publish --no-restore
+      working-directory: ./14/server/
+
+    - name: Restore dependencies plan-exec orchestrator client (demo 15)
+      run: dotnet restore
+      working-directory: ./15/client/
+
+    - name: Build plan-exec orchestrator client (demo 15)
+      run: dotnet publish --no-restore
+      working-directory: ./15/client/
+
+    - name: Restore dependencies plan executor server (demo 15)
+      run: dotnet restore
+      working-directory: ./15/server/
+
+    - name: Build plan executor server (demo 15)
+      run: dotnet publish --no-restore
+      working-directory: ./15/server/
