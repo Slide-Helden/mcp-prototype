@@ -3,7 +3,6 @@ Rezept-Demo (04) - Ablauf
 
 Vorbereitung:
 - Server (DocServer) starten, danach Client (`dotnet run` in DocHostApp).
-- Sicherstellen, dass Rezept-Dateien (z.B. Gnocchi.txt, Tomatensuppe.txt) im Ordner "Documents" liegen.
 
 Befehlsabfolge im Client-REPL:
 
