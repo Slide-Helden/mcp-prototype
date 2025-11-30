@@ -17,6 +17,7 @@ public static class TestPlanResources
     [Description("Listet alle verfuegbaren Testplaene als Markdown auf.")]
     public static string Catalog()
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Resource] tests/catalog gelesen");
         var builder = new StringBuilder();
         builder.AppendLine("# Testplan-Katalog");
         builder.AppendLine();
@@ -54,6 +55,7 @@ public static class TestPlanResources
     [Description("Beschreibt den LLM-first Testplan fuer den Google-News-Check.")]
     public static string GoogleNewsPlan()
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Resource] tests/plan/google-news gelesen");
         var path = Path.Combine(DocumentRoot, "google-news-plan.md");
         if (!File.Exists(path))
         {

@@ -10,6 +10,7 @@ public static class TestPlanTools
     [Description("Listet Testplaene, die von diesem Server ausgefuehrt werden koennen.")]
     public static IEnumerable<object> List(TestPlanRunner runner)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Tool] tests.list aufgerufen");
         return runner.ListPlans().Select(p => new
         {
             p.Name,
@@ -27,6 +28,7 @@ public static class TestPlanTools
         TestPlanRunner runner,
         CancellationToken cancellationToken)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Tool] tests.run aufgerufen (plan={plan ?? "null"})");
         return await runner.RunAsync(plan, cancellationToken);
     }
 }

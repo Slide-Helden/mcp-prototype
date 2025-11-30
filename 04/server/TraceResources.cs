@@ -12,7 +12,11 @@ public static class TraceResources
         MimeType = "text/plain",
         UriTemplate = "trace/logs")]
     [Description("Gibt die aufgezeichneten MCP-Kommunikations-Traces aus (HTTP, JSON-RPC, Tool-Calls).")]
-    public static string Logs(TraceStore store) => store.Dump();
+    public static string Logs(TraceStore store)
+    {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Resource] trace/logs gelesen");
+        return store.Dump();
+    }
 
     [McpServerResource(
         Name = "trace.logs.markdown",
@@ -20,5 +24,9 @@ public static class TraceResources
         MimeType = "text/markdown",
         UriTemplate = "trace/logs/markdown")]
     [Description("Gibt die MCP-Traces als Markdown-Tabelle aus.")]
-    public static string LogsMarkdown(TraceStore store) => store.DumpMarkdown();
+    public static string LogsMarkdown(TraceStore store)
+    {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Resource] trace/logs/markdown gelesen");
+        return store.DumpMarkdown();
+    }
 }

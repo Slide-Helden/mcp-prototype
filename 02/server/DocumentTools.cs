@@ -13,6 +13,7 @@ public static class DocumentTools
         [Description("Stichwort fuer Volltextsuche (Titel, Inhalt, Tags).")] string keyword,
         DocumentCatalog catalog)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Tool] docs.search aufgerufen (keyword={keyword ?? "null"})");
         if (string.IsNullOrWhiteSpace(keyword))
         {
             keyword = string.Empty;
@@ -34,6 +35,7 @@ public static class DocumentTools
     [Description("Waehlt ein zufaelliges Dokument aus und liefert eine Kurzzusammenfassung.")]
     public static object SuggestRandom(DocumentCatalog catalog)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Tool] docs.random aufgerufen");
         var doc = catalog.PickRandom();
         if (doc is null)
         {

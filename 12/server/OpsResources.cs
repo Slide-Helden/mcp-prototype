@@ -16,6 +16,7 @@ public static class OpsResources
     [Description("Kurze Zusammenfassung aller Services und Einstieg in die Tools.")]
     public static string Overview(OpsState state)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Resource] ops/overview gelesen");
         var services = state.ListServices();
         var sb = new StringBuilder();
 
@@ -56,6 +57,7 @@ public static class OpsResources
     [Description("Detailansicht eines Dienstes (Status, Version, Fehlerrate).")]
     public static string Service(string id, OpsState state)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Resource] ops/service/{id} gelesen");
         var svc = state.GetService(id);
         if (svc is null)
         {
@@ -89,6 +91,7 @@ public static class OpsResources
     [Description("Letzte Ereignisse zur Demo-Session.")]
     public static string Timeline(OpsState state)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Resource] ops/timeline gelesen");
         var events = state.LatestEvents();
         var sb = new StringBuilder();
 
@@ -112,6 +115,9 @@ public static class OpsResources
         MimeType = "text/markdown",
         UriTemplate = "ops/runbook/{topic}")]
     [Description("Manuelle Checkliste (Markdown). Kein Modell noetig.")]
-    public static string Runbook(string topic, OpsState state) =>
-        state.GetRunbook(topic);
+    public static string Runbook(string topic, OpsState state)
+    {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Resource] ops/runbook/{topic} gelesen");
+        return state.GetRunbook(topic);
+    }
 }

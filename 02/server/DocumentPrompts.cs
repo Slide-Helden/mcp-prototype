@@ -20,6 +20,7 @@ public static class DocumentPrompts
     [Description("Fuehrt das Modell durch eine strukturierte Recherche nach passenden Witzen.")]
     public static IEnumerable<ChatMessage> FindHumor(string? topic = null)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Prompt] docs.find_humor aufgerufen (topic={topic ?? "null"})");
         var focus = string.IsNullOrWhiteSpace(topic)
             ? "Finde einen passenden Witz, der gute Laune verspricht."
             : $"Finde einen passenden Witz zum Thema \"{topic.Trim()}\".";
@@ -39,6 +40,7 @@ public static class DocumentPrompts
     [Description("Leitet das Modell dazu an, ein Dokument zu lesen und strukturiert zusammenzufassen.")]
     public static IEnumerable<ChatMessage> Summarize(string documentId)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Prompt] docs.summarize_document aufgerufen (documentId={documentId ?? "null"})");
         yield return new ChatMessage(ChatRole.System, SystemRule);
         yield return new ChatMessage(
             ChatRole.User,

@@ -10,6 +10,7 @@ public static class TraceTools
     [Description("Loescht alle gespeicherten Trace-Eintraege und startet die Aufzeichnung neu.")]
     public static object Clear(TraceStore store)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Tool] trace.clear aufgerufen");
         // TraceStore hat keine Clear-Methode, aber wir koennen eine Nachricht hinzufuegen
         store.Add(TraceDirection.Internal, "SYS", "Trace-Ansicht wurde zurueckgesetzt", null);
         return new
@@ -23,6 +24,7 @@ public static class TraceTools
     [Description("Zeigt Statistiken zur aktuellen Trace-Aufzeichnung.")]
     public static object Stats(TraceStore store)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Tool] trace.stats aufgerufen");
         var entries = store.GetEntries();
         var incoming = entries.Count(e => e.Direction == TraceDirection.Incoming);
         var outgoing = entries.Count(e => e.Direction == TraceDirection.Outgoing);

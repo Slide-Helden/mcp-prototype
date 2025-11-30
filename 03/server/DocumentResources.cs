@@ -16,6 +16,7 @@ public static class DocumentResources
     [Description("Ausgangspunkt fuer menschlich gefuehrte Session.")]
     public static string Catalog(DocumentCatalog catalog)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Resource] manual/docs/catalog gelesen");
         var sb = new StringBuilder();
         sb.AppendLine("# Operator Katalog");
         sb.AppendLine("Dieser Katalog ist fuer manuelle Sessions gedacht.");
@@ -41,6 +42,7 @@ public static class DocumentResources
     [Description("Liefert den Dokumenteninhalt fuer die anschliessende manuelle Auswertung.")]
     public static string Document(string id, DocumentCatalog catalog)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Resource] manual/docs/document/{id} gelesen");
         var doc = catalog.Find(id);
         return doc?.Content ?? $"Dokument {id} nicht gefunden.";
     }

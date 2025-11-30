@@ -12,5 +12,9 @@ public static class TraceResources
         MimeType = "text/plain",
         UriTemplate = "trace/logs")]
     [Description("Gibt die letzten aufgezeichneten HTTP-Anfragen/Antworten aus.")]
-    public static string Logs(TraceStore store) => store.Dump();
+    public static string Logs(TraceStore store)
+    {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Resource] trace/logs gelesen");
+        return store.Dump();
+    }
 }

@@ -21,11 +21,11 @@ Server laeuft auf http://localhost:5000/sse
 SCHRITT-FUER-SCHRITT
 --------------------
 
-1. EINSTIEG - Orientierung
-   Eingabe: Welche Tools und Ressourcen hast du fuer Dokumente?
+1. EINSTIEG - Katalog lesen
+   Eingabe: Lies den Dokumentenkatalog und zeig mir was verfuegbar ist.
 
-   -> Beobachte: LLM ruft mcp.list_resources, mcp.list_prompts auf
-   -> Erwartet: docs.search, docs.random, docs/catalog, etc.
+   -> Beobachte: LLM ruft mcp.read_resource mit "docs/catalog" auf
+   -> Erwartet: Markdown-Liste mit Dokumenten (IDs, Titel, Tags)
 
 2. KATALOG ERKUNDEN
    Eingabe: Zeig mir alle verfuegbaren Dokumente.
