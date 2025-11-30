@@ -7,10 +7,10 @@ Hier: Katalog (Plaene) + Executor (Ausfuehrung)
 
 ARCHITEKTUR:
 ┌────────────┐     ┌─────────────────┐
-│  CLIENT    │────►│  Plan-Server    │  (Plaene lesen) = Server 06
+│  CLIENT    │────►│  Plan-Server    │  (Plaene lesen) Port 5000
 │            │     └─────────────────┘
 │            │     ┌─────────────────┐
-│            │────►│  Exec-Server    │  (Plaene ausfuehren) = Server 07
+│            │────►│  Exec-Server    │  (Plaene ausfuehren) Port 5001
 └────────────┘     └─────────────────┘
 
 VERFUEGBARE MCP-BAUSTEINE:
@@ -19,8 +19,8 @@ VERFUEGBARE MCP-BAUSTEINE:
 
 VORBEREITUNG (ZWEI TERMINALS + CLIENT)
 --------------------------------------
-Terminal 1: cd 06/server && dotnet run  (Port 5000 - Plan-Server)
-Terminal 2: cd 07/server && dotnet run  (Port 5001 - Executor)
+Terminal 1: cd 07/plan-server && dotnet run  (Port 5000 - Plan-Server)
+Terminal 2: cd 07/exec-server && dotnet run  (Port 5001 - Executor)
 Terminal 3: cd 07/client && dotnet run
 
 KEIN LLM NOETIG.
@@ -28,7 +28,7 @@ KEIN LLM NOETIG.
 SCHRITT-FUER-SCHRITT (MENUE-BASIERT)
 ------------------------------------
 
-1. PLAENE LISTEN (Plan-Server 06)
+1. PLAENE LISTEN (Plan-Server)
    Taste: 3 (Plaene listen)
 
    -> Zeige: Client ruft Plan-Server auf
@@ -38,10 +38,10 @@ SCHRITT-FUER-SCHRITT (MENUE-BASIERT)
    Taste: 4 (Plan lesen)
    Eingabe: google-news
 
-   -> Zeige: Resource tests/plan/google-news von Server 06
+   -> Zeige: Resource tests/plan/google-news vom Plan-Server
    -> Erklaere: Plan ist nur Beschreibung
 
-3. PLAN AUSFUEHREN (Exec-Server 07)
+3. PLAN AUSFUEHREN (Exec-Server)
    Taste: 5 (Plan ausfuehren)
 
    -> Zeige: Tool tests.run auf Executor-Server
@@ -56,8 +56,8 @@ SCHRITT-FUER-SCHRITT (MENUE-BASIERT)
 
 FLOW ZUSAMMENFASSUNG
 --------------------
-1. Katalog: Testplan nachschlagen (Server 06)
-2. Executor: Plan ausfuehren, Ergebnis pruefen (Server 07)
+1. Katalog: Testplan nachschlagen (Plan-Server)
+2. Executor: Plan ausfuehren, Ergebnis pruefen (Exec-Server)
 
 KERNAUSSAGE
 -----------

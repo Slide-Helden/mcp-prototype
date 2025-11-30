@@ -118,18 +118,26 @@ jobs:
       run: dotnet publish --no-restore
       working-directory: ./06/server/
 
-    - name: Restore dependencies plan-exec orchestrator client (demo 07)
+    - name: Restore dependencies multi-server client (demo 07)
       run: dotnet restore
       working-directory: ./07/client/
 
-    - name: Build plan-exec orchestrator client (demo 07)
+    - name: Build multi-server client (demo 07)
       run: dotnet publish --no-restore
       working-directory: ./07/client/
 
-    - name: Restore dependencies plan executor server (demo 07)
+    - name: Restore dependencies plan-server (demo 07)
       run: dotnet restore
-      working-directory: ./07/server/
+      working-directory: ./07/plan-server/
 
-    - name: Build plan executor server (demo 07)
+    - name: Build plan-server (demo 07)
       run: dotnet publish --no-restore
-      working-directory: ./07/server/
+      working-directory: ./07/plan-server/
+
+    - name: Restore dependencies exec-server (demo 07)
+      run: dotnet restore
+      working-directory: ./07/exec-server/
+
+    - name: Build exec-server (demo 07)
+      run: dotnet publish --no-restore
+      working-directory: ./07/exec-server/

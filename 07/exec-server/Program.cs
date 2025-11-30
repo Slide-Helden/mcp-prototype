@@ -51,7 +51,7 @@ app.MapGet("/health", () => Results.Ok(new
     note = "Dies ist der Ausfuehrungs-Server fuer Testplaene."
 }));
 
-Log($"[Server] Demo 07 - Testplan-Executor-Server gestartet");
+Log($"[Server] Demo 07 - Exec-Server (Ausfuehrung) gestartet");
 Log($"[Server] MCP SSE Endpunkt: {url}/sse");
 Log($"[Server] Health Check: {url}/health");
 
