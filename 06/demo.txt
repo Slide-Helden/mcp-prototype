@@ -1,17 +1,19 @@
-Demo 06: Protokoll-Inspektion
-=============================
-Deep-Dive | HTTP/JSON-RPC sichtbar
+Demo 06: Testplan-Katalog (nur lesen)
+=====================================
+Spezialisiert | Nur Resources
 
-WAS WIR ZEIGEN: Das MCP-Protokoll auf Byte-Ebene verstehen.
-HTTP-Requests und JSON-RPC Payloads werden sichtbar.
+WAS WIR ZEIGEN: MCP-Server kann auch rein als Daten-Provider dienen.
+Hier: Testplaene als Resources ohne ausfuehrbare Tools.
 
-NEU GEGENUEBER DEMO 04:
-- Demo 04 zeigt Trace aus Client-Sicht (was passiert)
-- Demo 06 zeigt Trace aus Protokoll-Sicht (wie es aussieht)
+DESIGN-ENTSCHEIDUNG:
+Server 06 = Katalog (nur lesen)
+Server 07 = Executor (ausfuehren)
+-> Trennung von Concerns
 
 VERFUEGBARE MCP-BAUSTEINE:
-- Tools: trace.ping, trace.echo (message)
-- Resources: trace/logs
+- Tools: (keine - nur Resources!)
+- Resources: tests/catalog, tests/plan/{slug}
+- Plaene: google-news
 
 VORBEREITUNG
 ------------
@@ -24,75 +26,37 @@ KEIN LLM NOETIG.
 SCHRITT-FUER-SCHRITT (MENUE-BASIERT)
 ------------------------------------
 
-1. PING SENDEN
-   Taste: 1 (trace.ping)
+1. KATALOG LESEN
+   Taste: 1 (Plaene listen)
 
-   -> Zeige: Tool wird aufgerufen, Antwort kommt
-   -> Erklaere: Einfachster moeglicher MCP-Call
+   -> Zeige: Resource tests/catalog
+   -> Erklaere: Markdown-Liste aller verfuegbaren Testplaene
 
-2. TRACE LESEN - ERSTER BLICK
-   Taste: 3 (trace.logs lesen)
+2. EINZELNEN PLAN LESEN
+   Taste: 2 (Plan lesen)
+   Eingabe: google-news
 
-   -> Zeige: HTTP POST mit JSON-RPC Body
-   -> Erklaere Zeile fuer Zeile:
-      - HTTP POST /message
-      - Body: {"jsonrpc":"2.0","method":"tools/call",...}
-      - Response: 200 OK
+   -> Zeige: Resource tests/plan/google-news
+   -> Erklaere: Plan beschreibt Schritte, fuehrt sie NICHT aus
 
-3. ECHO MIT TEXT
-   Taste: 2 (trace.echo)
-   Eingabe: Hello MCP
+3. PLAN-INHALT VERSTEHEN
+   Der Plan "google-news" enthaelt:
+   - resolve-target: Ziel-URL bestimmen
+   - http-get: GET senden
+   - status-check: 2xx/3xx pruefen
+   - content-fetch: Body lesen
+   - content-check: Schlagwort suchen
 
-   -> Zeige: Text wird an Server gesendet und zurueckgegeben
-
-4. TRACE LESEN - ECHO SEHEN
-   Taste: 3 (trace.logs lesen)
-
-   -> Zeige: Im Body steht der Text "Hello MCP"
-   -> Erklaere: So sieht ein Tool-Parameter im Protokoll aus
-
-5. TOOLS AUFLISTEN
-   Taste: 4 (Tools listen)
-
-   -> Zeige: tools/list Methode
-   -> Im Trace: {"method":"tools/list"} ohne params
-
-WAS MAN IM TRACE SIEHT
-----------------------
-Typischer Eintrag:
-  [2024-01-15 14:23:01] HTTP POST /message
-  Body={"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"trace.ping"}}
-  --> 200 (application/json)
-
-Protokoll-Elemente:
-- jsonrpc: Protokoll-Version (immer "2.0")
-- id: Request-ID fuer Zuordnung
-- method: MCP-Methode (tools/call, resources/read, etc.)
-- params: Parameter des Aufrufs
-- result: Antwort (bei Erfolg)
-- error: Fehler (bei Misserfolg)
+   -> Erklaere: Das ist eine BESCHREIBUNG, keine Ausfuehrung
 
 KERNAUSSAGE
 -----------
-"MCP ist JSON-RPC 2.0 ueber HTTP.
- Nichts Magisches - ein offener Standard.
- Jeder HTTP-Client kann MCP sprechen."
+"Dieser Server liefert nur Daten - keine Aktionen.
+ Die Ausfuehrung passiert auf einem anderen Server.
+ Das ist Separation of Concerns mit MCP."
 
 UEBERLEITUNG ZU DEMO 07
 -----------------------
-"MCP-Server muss nicht alles koennen.
- Manchmal reicht 'nur lesen' - Separation of Concerns.
- Demo 07 zeigt einen reinen Katalog-Server."
-
-ZUSAMMENFASSUNG BISHERIGER DEMOS
---------------------------------
-Demo 01: LLM-first Einstieg (Zeit)
-Demo 02: LLM-first mit Dokumenten
-Demo 03: Orchestrator-first (Kontrast)
-Demo 04: Live-Trace (Transparenz)
-Demo 05: MCP ohne KI
-Demo 06: Protokoll-Details (dieser Deep-Dive)
-
-"MCP ist ein Protokoll. LLMs koennen es nutzen.
- Menschen koennen es nutzen. Skripte koennen es nutzen.
- Die Macht liegt in der Standardisierung."
+"Jetzt haben wir den Plan.
+ Wie fuehren wir ihn aus?
+ Demo 07 zeigt Multi-Server-Orchestrierung."

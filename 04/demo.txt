@@ -1,20 +1,20 @@
 Demo 04: Live Communication Trace
 ==================================
-Aufbauend auf Demo 01-03 | +Transparenz
+Aufbauend auf Demo 01-03 | +Transparenz | +Protokoll-Details
 
 WAS WIR ZEIGEN: Die MCP-Kommunikation zwischen Client, Server und LLM
 wird in Echtzeit sichtbar. Man sieht jeden Request live.
 
 NEU GEGENUEBER DEMO 01-03:
-- Farbcodierter Live-Trace in der Konsole
-- Server-seitiges Tracing
-- Protokoll-Details werden sichtbar
+- Echtes SDK-Logging zeigt MCP-Protokoll-Details
+- JSON-RPC Payloads werden sichtbar
+- Konfigurierbare Log-Level (Debug, Trace)
 
 USE-CASE: Koch-Assistent mit Rezeptkatalog
 
 VERFUEGBARE MCP-BAUSTEINE:
 - Tools: docs.search, docs.random, trace.stats, trace.clear
-- Resources: docs/catalog, docs/document/{id}, trace/logs, trace/logs/markdown
+- Resources: docs/catalog, docs/document/{id}, trace/logs
 - Rezepte: Gnocchi Pesto Genovese, Tomatensuppe, Carbonara, Lasagne, u.v.m.
 
 VORBEREITUNG
@@ -23,13 +23,14 @@ Terminal 1: cd 04/server && dotnet run
 Terminal 2: cd 04/client && dotnet run
 
 Server laeuft auf http://localhost:5000/sse
-Live-Trace ist standardmaessig AKTIV.
 
-FARBEN IM LIVE-TRACE
---------------------
-CYAN:    MCP-Kommunikation (Client <-> Server)
-GELB:    LLM-Kommunikation (Client <-> LLM)
-MAGENTA: Tool-Aufrufe (LLM ruft Tools auf)
+LOG-LEVEL ANPASSEN (Program.cs Zeile 19)
+----------------------------------------
+var logLevel = LogLevel.Debug;    // Standard: Wichtige Infos
+var logLevel = LogLevel.Trace;    // Deep-Dive: Zeigt JSON-RPC Payloads!
+
+TIPP FUER DEMO: Mit LogLevel.Trace sieht man die kompletten
+JSON-RPC Requests/Responses - ideal um das Protokoll zu erklaeren.
 
 SCHRITT-FUER-SCHRITT
 --------------------
@@ -37,31 +38,29 @@ SCHRITT-FUER-SCHRITT
 1. EINSTIEG - Rezepte erkunden
    Eingabe: Welche Rezepte hast du?
 
-   -> LIVE-TRACE zeigt:
-      [LLM] USER->CLIENT: Nutzer-Eingabe
-      [LLM] CLIENT->LLM: Chat-Request
-      [TOOL] LLM->CLIENT: mcp.read_resource(docs/catalog)
-      [MCP] CLIENT->SERVER: resources/read
-      [MCP] SERVER->CLIENT: resources/read: ... Zeichen
+   -> SDK-Logging zeigt:
+      - MCP resources/list Request
+      - JSON-RPC Payload (bei Trace-Level)
+      - Tool-Aufrufe des LLM
 
-   -> Erklaere: Jede Zeile = ein Schritt in der Kommunikation
+   -> Erklaere: Jede Log-Zeile = ein Schritt in der Kommunikation
 
 2. EINZELNES REZEPT
    Eingabe: Wie mache ich die Gnocchi?
 
-   -> LIVE-TRACE zeigt Tool-Call fuer docs/document/recipe_gnocchi...
+   -> Logging zeigt Tool-Call fuer docs/document/recipe_gnocchi...
    -> Erklaere: LLM findet ID im Katalog, liest dann das Rezept
 
 3. VERGLEICH (MULTI-TOOL)
    Eingabe: Vergleiche Gnocchi und Tomatensuppe - welches ist schneller?
 
-   -> LIVE-TRACE zeigt MEHRERE Tool-Calls nacheinander
+   -> Logging zeigt MEHRERE Tool-Calls nacheinander
    -> Erklaere: LLM orchestriert mehrere Abrufe selbststaendig
 
 4. HALLUZINATIONS-TEST
    Eingabe: Wie mache ich Sushi?
 
-   -> LIVE-TRACE zeigt: LLM sucht, findet nichts
+   -> Logging zeigt: LLM sucht, findet nichts
    -> Erwartet: Ehrliche Antwort "Kein Sushi-Rezept vorhanden"
    -> Erklaere: Grounding verhindert Halluzination
 
@@ -71,19 +70,28 @@ SCHRITT-FUER-SCHRITT
    -> Zeigt die Server-Perspektive: HTTP-Requests, JSON-RPC
    -> Erklaere: Gleiche Kommunikation, andere Sichtweise
 
-TRACE-BEFEHLE (waehrend Demo nutzbar)
--------------------------------------
-:trace:off    - Live-Trace deaktivieren (ruhigere Ausgabe)
-:trace:live   - Live-Trace wieder aktivieren
-:trace        - Bisherigen Verlauf anzeigen
+TRACE-BEFEHLE
+-------------
 :trace:server - Server-Trace abrufen
-:trace:clear  - Trace-Verlauf leeren
+:trace:stats  - Trace-Statistiken vom Server
+
+PROTOKOLL-DETAILS (bei LogLevel.Trace sichtbar)
+-----------------------------------------------
+Typischer JSON-RPC Request:
+  {"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"docs.search"}}
+
+Protokoll-Elemente:
+- jsonrpc: Protokoll-Version (immer "2.0")
+- id: Request-ID fuer Zuordnung
+- method: MCP-Methode (tools/call, resources/read, etc.)
+- params: Parameter des Aufrufs
+- result: Antwort (bei Erfolg)
 
 KERNAUSSAGE
 -----------
 "Jetzt sehen wir, was 'unter der Haube' passiert:
  JSON-RPC Aufrufe, HTTP Requests, Tool-Calls.
- MCP ist ein standardisiertes Protokoll - kein Voodoo."
+ MCP ist JSON-RPC 2.0 ueber HTTP - ein offener Standard."
 
 UEBERLEITUNG ZU DEMO 05
 -----------------------

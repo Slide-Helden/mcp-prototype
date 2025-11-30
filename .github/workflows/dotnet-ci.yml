@@ -102,50 +102,34 @@ jobs:
       run: dotnet publish --no-restore
       working-directory: ./05/server/
 
-    - name: Restore dependencies trace client (demo 06)
+    - name: Restore dependencies testplan client (demo 06)
       run: dotnet restore
       working-directory: ./06/client/
 
-    - name: Build trace client (demo 06)
+    - name: Build testplan client (demo 06)
       run: dotnet publish --no-restore
       working-directory: ./06/client/
 
-    - name: Restore dependencies trace server (demo 06)
+    - name: Restore dependencies testplan server (demo 06)
       run: dotnet restore
       working-directory: ./06/server/
 
-    - name: Build trace server (demo 06)
+    - name: Build testplan server (demo 06)
       run: dotnet publish --no-restore
       working-directory: ./06/server/
 
-    - name: Restore dependencies testplan client (demo 07)
+    - name: Restore dependencies plan-exec orchestrator client (demo 07)
       run: dotnet restore
       working-directory: ./07/client/
 
-    - name: Build testplan client (demo 07)
+    - name: Build plan-exec orchestrator client (demo 07)
       run: dotnet publish --no-restore
       working-directory: ./07/client/
 
-    - name: Restore dependencies testplan server (demo 07)
+    - name: Restore dependencies plan executor server (demo 07)
       run: dotnet restore
       working-directory: ./07/server/
 
-    - name: Build testplan server (demo 07)
+    - name: Build plan executor server (demo 07)
       run: dotnet publish --no-restore
       working-directory: ./07/server/
-
-    - name: Restore dependencies plan-exec orchestrator client (demo 08)
-      run: dotnet restore
-      working-directory: ./08/client/
-
-    - name: Build plan-exec orchestrator client (demo 08)
-      run: dotnet publish --no-restore
-      working-directory: ./08/client/
-
-    - name: Restore dependencies plan executor server (demo 08)
-      run: dotnet restore
-      working-directory: ./08/server/
-
-    - name: Build plan executor server (demo 08)
-      run: dotnet publish --no-restore
-      working-directory: ./08/server/

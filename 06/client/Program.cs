@@ -1,9 +1,8 @@
-// TraceConsole - MCP request/response Beobachtung (kein LLM)
+// TestPlanConsole - Plan-Server-Client (nur Lesen)
 
 using Microsoft.Extensions.AI;
 using ModelContextProtocol;
 using ModelContextProtocol.Client;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
 
@@ -12,23 +11,23 @@ Log($"[MCP] Connecting to {url}...");
 var mcpClient = await McpClient.CreateAsync(
     new HttpClientTransport(new HttpClientTransportOptions
     {
-        Name = "Trace Server",
+        Name = "Plan Server",
         Endpoint = new Uri(url)
     }));
 
 Log($"[MCP] Connected to {url}");
 
 // Inventory laden und anzeigen
-var serverTools = await mcpClient.ListToolsAsync();
 var directResources = await mcpClient.ListResourcesAsync();
+var resourceTemplates = await mcpClient.ListResourceTemplatesAsync();
 
-Log($"[MCP] {serverTools.Count} Tool(s), {directResources.Count} Resource(s).");
-if (serverTools.Count > 0)
-    Log($"[MCP]   Tools: {string.Join(", ", serverTools.Select(t => t.Name))}");
+Log($"[MCP] {directResources.Count} Resource(s), {resourceTemplates.Count} Template(s).");
 if (directResources.Count > 0)
     Log($"[MCP]   Resources: {string.Join(", ", directResources.Select(r => r.Uri))}");
+if (resourceTemplates.Count > 0)
+    Log($"[MCP]   Templates: {string.Join(", ", resourceTemplates.Select(t => t.UriTemplate))}");
 
-Console.WriteLine("Ziel: Calls ausloesen und dann trace.logs ansehen (HTTP-Level).");
+Console.WriteLine("Dieser Client liest nur Testplaene (Server 1). Ausfuehrung liegt auf Server 2.");
 
 while (true)
 {
@@ -39,18 +38,12 @@ while (true)
     switch (choice)
     {
         case "1":
-            await CallPing(mcpClient);
+            await ListPlans(mcpClient);
             break;
         case "2":
-            await CallEcho(mcpClient);
+            await ReadPlan(mcpClient);
             break;
         case "3":
-            await ReadTrace(mcpClient);
-            break;
-        case "4":
-            await ListTools(mcpClient);
-            break;
-        case "5":
             return;
         default:
             Console.WriteLine("Unknown choice.");
@@ -58,50 +51,27 @@ while (true)
     }
 }
 
-static async Task CallPing(McpClient client)
+static async Task ListPlans(McpClient client)
 {
-    var result = await client.CallToolAsync("trace.ping", new Dictionary<string, object?>());
-    PrintContent(result.Content.ToAIContents(), "PING Antwort");
+    var res = await client.ReadResourceAsync("tests/catalog");
+    PrintContent(res.Contents.ToAIContents(), "Plan-Katalog");
 }
 
-static async Task CallEcho(McpClient client)
+static async Task ReadPlan(McpClient client)
 {
-    Console.Write("Nachricht fuer trace.echo: ");
-    var msg = Console.ReadLine() ?? "hello trace";
-
-    var result = await client.CallToolAsync("trace.echo", new Dictionary<string, object?>
-    {
-        ["message"] = msg
-    });
-
-    PrintContent(result.Content.ToAIContents(), "ECHO Antwort");
-}
-
-static async Task ReadTrace(McpClient client)
-{
-    var res = await client.ReadResourceAsync("trace/logs");
-    PrintContent(res.Contents.ToAIContents(), "Server Trace Log");
-}
-
-static async Task ListTools(McpClient client)
-{
-    var tools = await client.ListToolsAsync();
-    Console.WriteLine("Tools:");
-    foreach (var t in tools)
-    {
-        Console.WriteLine($"- {t.Name} : {t.Description}");
-    }
+    Console.Write("Plan-Slug (z. B. google-news): ");
+    var slug = (Console.ReadLine() ?? "google-news").Trim();
+    var res = await client.ReadResourceAsync($"tests/plan/{slug}");
+    PrintContent(res.Contents.ToAIContents(), $"Planbeschreibung {slug}");
 }
 
 static void PrintMenu()
 {
     Console.WriteLine();
-    Console.WriteLine("Trace Demo");
-    Console.WriteLine(" 1) trace.ping (Tool)");
-    Console.WriteLine(" 2) trace.echo (Tool)");
-    Console.WriteLine(" 3) trace.logs lesen (Resource, zeigt mcp JSON-RPC HTTP-Calls)");
-    Console.WriteLine(" 4) Tools listen");
-    Console.WriteLine(" 5) Exit");
+    Console.WriteLine("TestPlan Katalog-Client (Server 1)");
+    Console.WriteLine(" 1) Plaene listen (Resource catalog)");
+    Console.WriteLine(" 2) Plan lesen (Resource tests/plan/{slug})");
+    Console.WriteLine(" 3) Exit");
 }
 
 static void PrintContent(IEnumerable<AIContent> content, string headline)
@@ -120,7 +90,6 @@ static string ExtractText(IEnumerable<AIContent> content)
     }
     if (sb.Length > 0) return sb.ToString();
 
-    // Fallback: serialisiere verbleibende Inhalte (z. B. Objekte) als JSON
     foreach (var item in content)
     {
         sb.AppendLine(JsonSerializer.Serialize(item, new JsonSerializerOptions { WriteIndented = true }));
