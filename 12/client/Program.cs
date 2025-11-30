@@ -12,6 +12,7 @@ const string ServiceUriTemplate = "ops/service/{0}";
 const string RunbookUriTemplate = "ops/runbook/{0}";
 
 var url = Environment.GetEnvironmentVariable("MCP_SERVER_URL") ?? "http://localhost:5600/sse";
+Log($"[MCP] Connecting to {url}...");
 var mcpClient = await McpClient.CreateAsync(
     new HttpClientTransport(new HttpClientTransportOptions
     {
@@ -19,7 +20,7 @@ var mcpClient = await McpClient.CreateAsync(
         Endpoint = new Uri(url)
     }));
 
-Console.WriteLine($"[MCP] Connected to {url} (kein LLM im Spiel).");
+Log($"[MCP] Connected to {url} (kein LLM im Spiel).");
 Console.WriteLine("Dieses Client-UI stoesst Tools/Resources manuell an (C# Dev Edition: NuGet, Nullable, Tests).");
 Console.WriteLine();
 
@@ -342,4 +343,9 @@ static bool ReadBool(JsonElement el, string property)
     if (camelVal.ValueKind == JsonValueKind.False) return false;
 
     return false;
+}
+
+static void Log(string message)
+{
+    Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {message}");
 }

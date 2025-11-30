@@ -2,14 +2,22 @@ using System.Text;
 using Microsoft.AspNetCore.HttpLogging;
 using TraceServer;
 
+static void Log(string message) => Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {message}");
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls(
-    Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:5700");
+var url = Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:5700";
+builder.WebHost.UseUrls(url);
+Log($"[Server] Configuring on {url}...");
 
+// Logging mit Timestamps konfigurieren
 builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
-builder.Logging.SetMinimumLevel(LogLevel.Debug);
+builder.Logging.AddSimpleConsole(options =>
+{
+    options.TimestampFormat = "[HH:mm:ss.fff] ";
+    options.SingleLine = true;
+});
+builder.Logging.SetMinimumLevel(LogLevel.Information);
 
 builder.Services.AddSingleton<TraceStore>();
 
@@ -64,5 +72,9 @@ app.MapGet("/health", () => Results.Ok(new
 }));
 
 app.MapGet("/trace/logs", (TraceStore store) => Results.Text(store.Dump(), "text/plain"));
+
+Log($"[Server] Demo 13 - Trace-Server gestartet");
+Log($"[Server] MCP SSE Endpunkt: {url}/sse");
+Log($"[Server] Trace Logs: {url}/trace/logs");
 
 app.Run();

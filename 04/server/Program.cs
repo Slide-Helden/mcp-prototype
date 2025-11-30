@@ -6,15 +6,21 @@ using Microsoft.AspNetCore.HttpLogging;
 using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 
+static void Log(string message) => Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {message}");
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Standard-Port fuer die Demo (http://localhost:5200)
-builder.WebHost.UseUrls(
-    Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:5200");
+var url = Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:5200";
+builder.WebHost.UseUrls(url);
+Log($"[Server] Configuring on {url}...");
 
-// Logging konfigurieren
+// Logging mit Timestamps konfigurieren
 builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
+builder.Logging.AddSimpleConsole(options =>
+{
+    options.TimestampFormat = "[HH:mm:ss.fff] ";
+    options.SingleLine = true;
+});
 builder.Logging.SetMinimumLevel(LogLevel.Information);
 
 // Services registrieren
@@ -152,14 +158,15 @@ app.MapGet("/trace/logs/markdown", (TraceStore store) => Results.Text(store.Dump
 
 app.MapMcp();
 
+Log("[Server] Demo 04 - Rezept-Server mit Live Trace gestartet");
 Console.WriteLine("╔════════════════════════════════════════════════════════════════════════════════╗");
 Console.WriteLine("║           Demo 04: Rezept-Server mit MCP Communication Trace                  ║");
 Console.WriteLine("╠════════════════════════════════════════════════════════════════════════════════╣");
-Console.WriteLine("║ Endpunkte:                                                                     ║");
-Console.WriteLine("║   - MCP SSE:        http://localhost:5200/sse                                  ║");
-Console.WriteLine("║   - Health:         http://localhost:5200/health                               ║");
-Console.WriteLine("║   - Trace (Text):   http://localhost:5200/trace/logs                           ║");
-Console.WriteLine("║   - Trace (MD):     http://localhost:5200/trace/logs/markdown                  ║");
+Console.WriteLine($"║ Endpunkte:                                                                     ║");
+Console.WriteLine($"║   - MCP SSE:        {url}/sse                                  ║");
+Console.WriteLine($"║   - Health:         {url}/health                               ║");
+Console.WriteLine($"║   - Trace (Text):   {url}/trace/logs                           ║");
+Console.WriteLine($"║   - Trace (MD):     {url}/trace/logs/markdown                  ║");
 Console.WriteLine("║                                                                                 ║");
 Console.WriteLine("║ MCP Resources:                                                                  ║");
 Console.WriteLine("║   - trace/logs          - Trace als formatierter Text                          ║");

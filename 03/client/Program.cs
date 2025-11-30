@@ -30,9 +30,10 @@ IChatClient chat =
     )
     .Build();
 
-Console.WriteLine($"[Chat] Orchestrator-first manual mode using model {modelId}");
+Log($"[Chat] Orchestrator-first manual mode using model {modelId}");
 
 var url = Environment.GetEnvironmentVariable("MCP_SERVER_URL") ?? "http://localhost:5400/sse";
+Log($"[MCP] Connecting to {url}...");
 var mcpClient = await McpClient.CreateAsync(
     new HttpClientTransport(new HttpClientTransportOptions
     {
@@ -40,7 +41,7 @@ var mcpClient = await McpClient.CreateAsync(
         Endpoint = new Uri(url)
     }));
 
-Console.WriteLine("[MCP] Connected. Operator (Orchestrator-first) chooses the flow.");
+Log("[MCP] Connected. Operator (Orchestrator-first) chooses the flow.");
 
 var collectedDocs = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
@@ -179,4 +180,9 @@ static async Task SummarizeAsync(IChatClient chat, IDictionary<string, string> c
         Console.Write(update);
     }
     Console.WriteLine();
+}
+
+static void Log(string message)
+{
+    Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {message}");
 }

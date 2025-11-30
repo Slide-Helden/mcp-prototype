@@ -43,12 +43,13 @@ IChatClient chat =
     .UseFunctionInvocation() // Tool-/Function-Calls aktivieren (LLM-first Voraussetzung)
     .Build();
 
-Console.WriteLine($"[Chat] Using model: {modelId} @ {endpoint}");
+Log($"[Chat] Using model: {modelId} @ {endpoint}");
 Console.WriteLine();
 
 // ---------- 2) MCP-Client (HTTP/SSE) zu bereits laufendem Server ----------
 
 var url = Environment.GetEnvironmentVariable("MCP_SERVER_URL") ?? "http://localhost:5000/sse";
+Log($"[MCP] Connecting to {url}...");
 var mcpClient = await McpClient.CreateAsync(
     new HttpClientTransport(new HttpClientTransportOptions
     {
@@ -57,7 +58,7 @@ var mcpClient = await McpClient.CreateAsync(
         // Optional: DefaultHeaders = new() { ["Authorization"] = "Bearer <token>" }
     }));
 
-Console.WriteLine("[MCP] Connected.");
+Log("[MCP] Connected.");
 Console.WriteLine();
 
 // ---------- 3) Server-Tools holen und LLM-first-Client-Tools definieren ----------
@@ -69,7 +70,7 @@ var serverPrompts = await mcpClient.ListPromptsAsync();
 var directResources = await mcpClient.ListResourcesAsync();
 var resourceTemplates = await mcpClient.ListResourceTemplatesAsync();
 
-Console.WriteLine($"[MCP] Server liefert {serverTools.Count} Tool(s), {serverPrompts.Count} Prompt(s) und {directResources.Count} Resource(s) (+ {resourceTemplates.Count} Template(s)).");
+Log($"[MCP] Server liefert {serverTools.Count} Tool(s), {serverPrompts.Count} Prompt(s) und {directResources.Count} Resource(s) (+ {resourceTemplates.Count} Template(s)).");
 Console.WriteLine("      Nutze :prompts, :resources, :prompt <name> oder :read <uri> für einen schnellen Einstieg.");
 Console.WriteLine();
 
@@ -325,6 +326,11 @@ static IReadOnlyDictionary<string, object?> ParseArgs(string json)
             JsonValueKind.Array => JsonSerializer.Deserialize<List<object?>>(el.GetRawText()),
             _ => el.GetRawText()
         };
+}
+
+static void Log(string message)
+{
+    Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {message}");
 }
 
 static void PrintHelp()

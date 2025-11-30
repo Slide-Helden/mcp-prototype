@@ -36,7 +36,7 @@ IChatClient chat =
     .Build();
 
 PrintBanner();
-Console.WriteLine($"[Chat] Using model: {modelId} @ {endpoint}");
+Log($"[Chat] Using model: {modelId} @ {endpoint}");
 Console.WriteLine();
 
 // ---------- 2) MCP-Client zum Dokumenten-Server ----------
@@ -52,7 +52,7 @@ var mcpClient = await McpClient.CreateAsync(
     }));
 
 clientTrace.Log("MCP", "CLIENT", "SSE-Verbindung hergestellt");
-Console.WriteLine("[MCP] Connected to Document server.");
+Log("[MCP] Connected to Document server.");
 Console.WriteLine();
 
 // ---------- 3) Inventory: Tools, Prompts, Resources ----------
@@ -73,7 +73,7 @@ clientTrace.Log("MCP", "CLIENT->SERVER", "resources/templates/list");
 var resourceTemplates = await mcpClient.ListResourceTemplatesAsync();
 clientTrace.Log("MCP", "SERVER->CLIENT", $"resources/templates/list: {resourceTemplates.Count} Templates");
 
-Console.WriteLine($"[MCP] {serverTools.Count} Tool(s), {serverPrompts.Count} Prompt(s), {directResources.Count} Resource(s), {resourceTemplates.Count} Template(s).");
+Log($"[MCP] {serverTools.Count} Tool(s), {serverPrompts.Count} Prompt(s), {directResources.Count} Resource(s), {resourceTemplates.Count} Template(s).");
 Console.WriteLine();
 PrintHelp();
 
@@ -417,6 +417,11 @@ static IReadOnlyDictionary<string, object?> ParseArgs(string json)
             JsonValueKind.Array => JsonSerializer.Deserialize<List<object?>>(el.GetRawText()),
             _ => el.GetRawText()
         };
+}
+
+static void Log(string message)
+{
+    Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {message}");
 }
 
 static void PrintBanner()

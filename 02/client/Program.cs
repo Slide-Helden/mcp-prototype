@@ -43,12 +43,13 @@ IChatClient chat =
     .UseFunctionInvocation()
     .Build();
 
-Console.WriteLine($"[Chat] Using model: {modelId} @ {endpoint}");
+Log($"[Chat] Using model: {modelId} @ {endpoint}");
 Console.WriteLine();
 
 // ---------- 2) MCP-Client zum Dokumenten-Server ----------
 
 var url = "http://localhost:5100/sse";
+Log($"[MCP] Connecting to {url}...");
 var mcpClient = await McpClient.CreateAsync(
     new HttpClientTransport(new HttpClientTransportOptions
     {
@@ -56,7 +57,7 @@ var mcpClient = await McpClient.CreateAsync(
         Endpoint = new Uri(url)
     }));
 
-Console.WriteLine("[MCP] Connected to Document server.");
+Log("[MCP] Connected to Document server.");
 Console.WriteLine();
 
 // ---------- 3) Inventory: Tools, Prompts, Resources ----------
@@ -66,7 +67,7 @@ var serverPrompts = await mcpClient.ListPromptsAsync();
 var directResources = await mcpClient.ListResourcesAsync();
 var resourceTemplates = await mcpClient.ListResourceTemplatesAsync();
 
-Console.WriteLine($"[MCP] {serverTools.Count} Tool(s), {serverPrompts.Count} Prompt(s), {directResources.Count} Resource(s), {resourceTemplates.Count} Template(s).");
+Log($"[MCP] {serverTools.Count} Tool(s), {serverPrompts.Count} Prompt(s), {directResources.Count} Resource(s), {resourceTemplates.Count} Template(s).");
 Console.WriteLine("      Commands: :tools, :prompts, :resources, :prompt <name>, :read <uri>");
 Console.WriteLine();
 
@@ -319,6 +320,11 @@ static IReadOnlyDictionary<string, object?> ParseArgs(string json)
             JsonValueKind.Array => JsonSerializer.Deserialize<List<object?>>(el.GetRawText()),
             _ => el.GetRawText()
         };
+}
+
+static void Log(string message)
+{
+    Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {message}");
 }
 
 static void PrintHelp()

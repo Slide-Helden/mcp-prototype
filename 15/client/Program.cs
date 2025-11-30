@@ -10,30 +10,34 @@ var ghUrl = Environment.GetEnvironmentVariable("MCP_GITHUB_SERVER_URL") ?? "http
 var planUrl = Environment.GetEnvironmentVariable("MCP_PLAN_SERVER_URL") ?? "http://localhost:5800/sse";
 var execUrl = Environment.GetEnvironmentVariable("MCP_EXEC_SERVER_URL") ?? "http://localhost:5850/sse";
 
+Log($"[MCP] Connecting to GitHub-Server: {ghUrl}...");
 var ghClient = await McpClient.CreateAsync(
     new HttpClientTransport(new HttpClientTransportOptions
     {
         Name = "GitHub Server",
         Endpoint = new Uri(ghUrl)
     }));
+Log("[MCP] GitHub-Server connected.");
 
+Log($"[MCP] Connecting to Plan-Server: {planUrl}...");
 var planClient = await McpClient.CreateAsync(
     new HttpClientTransport(new HttpClientTransportOptions
     {
         Name = "Plan Server",
         Endpoint = new Uri(planUrl)
     }));
+Log("[MCP] Plan-Server connected.");
 
+Log($"[MCP] Connecting to Executor-Server: {execUrl}...");
 var execClient = await McpClient.CreateAsync(
     new HttpClientTransport(new HttpClientTransportOptions
     {
         Name = "Executor Server",
         Endpoint = new Uri(execUrl)
     }));
+Log("[MCP] Executor-Server connected.");
 
-Console.WriteLine($"[MCP] GitHub-Server: {ghUrl}");
-Console.WriteLine($"[MCP] Plan-Server: {planUrl}");
-Console.WriteLine($"[MCP] Executor-Server: {execUrl}");
+Log($"[MCP] All 3 servers connected:");
 Console.WriteLine("Ablauf: Bugs lesen (GitHub) -> Plan nachschlagen (Server 1) -> optional tests.run (Server 2).");
 
 while (true)
@@ -210,4 +214,9 @@ static async Task ListGitHubTools(McpClient ghClient)
     {
         Console.WriteLine($"- {t.Name} : {t.Description}");
     }
+}
+
+static void Log(string message)
+{
+    Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {message}");
 }

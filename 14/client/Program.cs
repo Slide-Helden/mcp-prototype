@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Json;
 
 var url = Environment.GetEnvironmentVariable("MCP_SERVER_URL") ?? "http://localhost:5800/sse";
+Log($"[MCP] Connecting to {url}...");
 var mcpClient = await McpClient.CreateAsync(
     new HttpClientTransport(new HttpClientTransportOptions
     {
@@ -14,7 +15,7 @@ var mcpClient = await McpClient.CreateAsync(
         Endpoint = new Uri(url)
     }));
 
-Console.WriteLine($"[MCP] Connected to {url}");
+Log($"[MCP] Connected to {url}");
 Console.WriteLine("Dieser Client liest nur Testplaene (Server 1). Ausfuehrung liegt auf Server 2.");
 
 while (true)
@@ -83,4 +84,9 @@ static string ExtractText(IEnumerable<AIContent> content)
         sb.AppendLine(JsonSerializer.Serialize(item, new JsonSerializerOptions { WriteIndented = true }));
     }
     return sb.ToString();
+}
+
+static void Log(string message)
+{
+    Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {message}");
 }
