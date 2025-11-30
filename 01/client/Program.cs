@@ -1,4 +1,4 @@
-﻿// Program.cs – LLM-first Edition (C# 12 / .NET 8)
+// Program.cs – LLM-first Edition (C# 12 / .NET 10)
 // NuGet: Microsoft.Extensions.AI, Microsoft.Extensions.AI.OpenAI (prerelease), ModelContextProtocol (prerelease)
 
 using Microsoft.Extensions.AI;
@@ -17,9 +17,20 @@ using AIFunction = Microsoft.Extensions.AI.AIFunction;
 
 // ---------- 1) Chat-Client auf lokales Ollama (/v1) ----------
 
-var endpoint = Environment.GetEnvironmentVariable("OLLAMA_OPENAI_ENDPOINT") ?? "http://localhost:11434/v1";
-var modelId = Environment.GetEnvironmentVariable("OLLAMA_MODEL") ?? "gpt-oss:20b";
-var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY") ?? "ollama"; // Dummy ok bei Ollama
+/*
+    //cloud beispiel    
+
+    var endpoint = Environment.GetEnvironmentVariable("OLLAMA_OPENAI_ENDPOINT");
+    var modelId = Environment.GetEnvironmentVariable("OLLAMA_MODEL");
+    var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+
+ */
+
+// lokales beispiel
+
+var endpoint = "http://localhost:11434/v1";
+var modelId = "gpt-oss:20b";
+var apiKey = "ollama";
 
 IChatClient chat =
     new ChatClientBuilder(

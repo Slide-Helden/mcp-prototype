@@ -1,19 +1,23 @@
-Breakpoint Demo Ablauf (01)
-===========================
+LLM-first Zeit-Demo (01)
+========================
+
+Ziel: Das LLM Führt den Ablauf, entdeckt Tools/Prompts/Resources selbst und ruft sie eigenstaendig auf (Function Calls).
 
 Vorbereitung:
-- Breakpoints in den Client-Methoden setzen (z. B. mcp.list_resources, mcp.read_resource, mcp.list_prompts, mcp.get_prompt).
-- Debugger an den Client-Prozess anhaengen.
+- Server starten: `dotnet run` in `01/server`
+- Client starten: `dotnet run` in `01/client`
+- Optional: Breakpoints in Client-Toolfunktionen setzen (z. B. `mcp.list_resources`, `mcp.read_resource`, `mcp.list_prompts`, `mcp.get_prompt`, `time.now`) und Debugger an den Client-Prozess anhaengen.
 
-Befehle im Client-REPL:
-0. :read time/about
-1. :tools
-2. Freier Prompt: "Welche Tools stehen dir zur Verfuegung?"
-3. Freier Prompt: "Nutze das Tool time.now und gib mir die aktuelle Uhrzeit in UTC."
-4. :resources
-5. Freier Prompt: "Liste alle Ressourcen auf und entscheide, welche fuer die Aufgabe nuetzlich sind."
-7. :prompts
-8. Freier Prompt: "Welche Prompts bietet der Server an und welchen wuerdest du fuer eine Meeting-Vorbereitung nutzen?"
-9. :prompt time.prepare_response {"timezone":"Europe/Berlin","request":"Plane einen Meeting-Vorschlag"}
+Ablauf im Client (nur freie Prompts, keine `:`-Kommandos):
+1. Freier Prompt: "Welche Tools, Prompts und Ressourcen stehen dir per MCP zur Verfuegung? erkläre kurz, wie du sie für Zeitfragen nutzt."
+2. Freier Prompt: "Gib mir die aktuelle Uhrzeit in UTC. Nutze das Tool time.now und formatiere als ISO-8601."
+3. Freier Prompt: "Plane einen Meeting-Vorschlag für die Zeitzone Europe/Berlin. Ziehe Ressourcen wie time/about und time/city/berlin in Betracht und nutze bei Bedarf time.now mit timezone=Europe/Berlin."
+4. Freier Prompt: "Vergleiche die aktuelle lokale Zeit in Berlin, New York und Seoul. Nenne die verwendeten Zeitzonen-IDs und gib die Zeiten im ISO-Format aus."
+5. Freier Prompt: "Fasse zusammen, welche MCP-Bausteine (Tools, Prompts, Resources) du eingesetzt hast und warum."
 
-Damit werden alle MCP-Aufrufe angesprungen und Breakpoints ausgeloest.
+Hinweis:
+- LLM-first bedeutet: Das Modell entscheidet selbst, welche Tools/Prompts/Resources es aufruft. Manuelle `:`-Befehle werden hier bewusst nicht verwendet.
+
+Optional (Orchestrator-first, als Bruecke zu 03):
+- Wenn du die gleichen Operationen manuell inspizieren willst, nutze per Befehl z. B. `:tools`, `:prompts`, `:resources`, `:read time/about` oder `:prompt time.prepare_response {"timezone":"Europe/Berlin","request":"Plane einen Meeting-Vorschlag"}`.
+
