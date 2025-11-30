@@ -75,7 +75,7 @@ Typische MCP-Methoden:
 | **02** | LLM-first mit Dokumenten + Quellen     | +Dokumente, +Suche           |
 | **03** | Orchestrator-first (Kontrast zu 01/02) | Steuerungsmodell-Wechsel     |
 | **04** | LLM-first + Live-Trace                 | +Transparenz, +Debugging     |
-| **12** | MCP ohne KI (reiner Operator-Flow)     | MCP als Standard-Connector   |
-| **13** | Trace-Demo (Protokoll-Inspektion)      | +Protokoll-Details           |
-| **14** | Testplan-Katalog (nur lesen)           |  +Use-Case: Testing          |
-| **15** | Multi-Server-Orchestrierung            | +Skalierung                  |
+| **05** | MCP ohne KI (reiner Operator-Flow)     | MCP als Standard-Connector   |
+| **06** | Protokoll-Inspektion (JSON-RPC)        | +Protokoll-Details           |
+| **07** | Testplan-Katalog (nur lesen)           | +Use-Case: Testing           |
+| **08** | Multi-Server-Orchestrierung            | +Skalierung                  |

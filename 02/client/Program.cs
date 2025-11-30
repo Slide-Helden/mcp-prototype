@@ -17,20 +17,20 @@ using AIFunction = Microsoft.Extensions.AI.AIFunction;
 
 // ---------- 1) Chat-Client (Ollama / OpenAI kompatibel) ----------
 
-/*
     //cloud beispiel    
 
     var endpoint = Environment.GetEnvironmentVariable("OLLAMA_OPENAI_ENDPOINT");
     var modelId = Environment.GetEnvironmentVariable("OLLAMA_MODEL");
     var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-*/
+
  
 
 // lokales beispiel
-
+/*
 var endpoint = "http://localhost:11434/v1";
 var modelId = "gpt-oss:20b";
 var apiKey = "ollama";
+*/
 
 IChatClient chat =
     new ChatClientBuilder(

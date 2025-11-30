@@ -85,8 +85,8 @@ KERNAUSSAGE
  JSON-RPC Aufrufe, HTTP Requests, Tool-Calls.
  MCP ist ein standardisiertes Protokoll - kein Voodoo."
 
-OPTIONALE UEBERLEITUNG ZU DEMO 12
----------------------------------
+UEBERLEITUNG ZU DEMO 05
+-----------------------
 "Bisher brauchten wir immer ein LLM.
  Aber MCP funktioniert auch ohne KI -
  als reiner Standard-Connector."

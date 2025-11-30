@@ -1,4 +1,4 @@
-Demo 14: Testplan-Katalog (nur lesen)
+Demo 07: Testplan-Katalog (nur lesen)
 =====================================
 Spezialisiert | Nur Resources
 
@@ -6,8 +6,8 @@ WAS WIR ZEIGEN: MCP-Server kann auch rein als Daten-Provider dienen.
 Hier: Testplaene als Resources ohne ausfuehrbare Tools.
 
 DESIGN-ENTSCHEIDUNG:
-Server 14 = Katalog (nur lesen)
-Server 15 = Executor (ausfuehren)
+Server 07 = Katalog (nur lesen)
+Server 08 = Executor (ausfuehren)
 -> Trennung von Concerns
 
 VERFUEGBARE MCP-BAUSTEINE:
@@ -17,8 +17,8 @@ VERFUEGBARE MCP-BAUSTEINE:
 
 VORBEREITUNG
 ------------
-Terminal 1: cd 14/server && dotnet run
-Terminal 2: cd 14/client && dotnet run
+Terminal 1: cd 07/server && dotnet run
+Terminal 2: cd 07/client && dotnet run
 
 Server laeuft auf http://localhost:5000/sse
 KEIN LLM NOETIG.
@@ -55,8 +55,8 @@ KERNAUSSAGE
  Die Ausfuehrung passiert auf einem anderen Server.
  Das ist Separation of Concerns mit MCP."
 
-UEBERLEITUNG ZU DEMO 15
+UEBERLEITUNG ZU DEMO 08
 -----------------------
 "Jetzt haben wir den Plan.
  Wie fuehren wir ihn aus?
- Demo 15 zeigt Multi-Server-Orchestrierung."
+ Demo 08 zeigt Multi-Server-Orchestrierung."

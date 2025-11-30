@@ -1,4 +1,4 @@
-Demo 13: Protokoll-Inspektion
+Demo 06: Protokoll-Inspektion
 =============================
 Deep-Dive | HTTP/JSON-RPC sichtbar
 
@@ -7,7 +7,7 @@ HTTP-Requests und JSON-RPC Payloads werden sichtbar.
 
 NEU GEGENUEBER DEMO 04:
 - Demo 04 zeigt Trace aus Client-Sicht (was passiert)
-- Demo 13 zeigt Trace aus Protokoll-Sicht (wie es aussieht)
+- Demo 06 zeigt Trace aus Protokoll-Sicht (wie es aussieht)
 
 VERFUEGBARE MCP-BAUSTEINE:
 - Tools: trace.ping, trace.echo (message)
@@ -15,8 +15,8 @@ VERFUEGBARE MCP-BAUSTEINE:
 
 VORBEREITUNG
 ------------
-Terminal 1: cd 13/server && dotnet run
-Terminal 2: cd 13/client && dotnet run
+Terminal 1: cd 06/server && dotnet run
+Terminal 2: cd 06/client && dotnet run
 
 Server laeuft auf http://localhost:5000/sse
 KEIN LLM NOETIG.
@@ -78,14 +78,20 @@ KERNAUSSAGE
  Nichts Magisches - ein offener Standard.
  Jeder HTTP-Client kann MCP sprechen."
 
-ZUSAMMENFASSUNG ALLER DEMOS
----------------------------
+UEBERLEITUNG ZU DEMO 07
+-----------------------
+"MCP-Server muss nicht alles koennen.
+ Manchmal reicht 'nur lesen' - Separation of Concerns.
+ Demo 07 zeigt einen reinen Katalog-Server."
+
+ZUSAMMENFASSUNG BISHERIGER DEMOS
+--------------------------------
 Demo 01: LLM-first Einstieg (Zeit)
 Demo 02: LLM-first mit Dokumenten
 Demo 03: Orchestrator-first (Kontrast)
 Demo 04: Live-Trace (Transparenz)
-Demo 12: MCP ohne KI
-Demo 13: Protokoll-Details (dieser Deep-Dive)
+Demo 05: MCP ohne KI
+Demo 06: Protokoll-Details (dieser Deep-Dive)
 
 "MCP ist ein Protokoll. LLMs koennen es nutzen.
  Menschen koennen es nutzen. Skripte koennen es nutzen.

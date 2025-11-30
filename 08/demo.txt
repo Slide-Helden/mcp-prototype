@@ -1,4 +1,4 @@
-Demo 15: Multi-Server-Orchestrierung
+Demo 08: Multi-Server-Orchestrierung
 =====================================
 Fortgeschritten | Drei Server
 
@@ -10,10 +10,10 @@ ARCHITEKTUR:
 │  CLIENT    │────►│  GitHub-Server  │  (Issues suchen)
 │            │     └─────────────────┘
 │            │     ┌─────────────────┐
-│            │────►│  Plan-Server    │  (Plaene lesen) = Server 14
+│            │────►│  Plan-Server    │  (Plaene lesen) = Server 07
 │            │     └─────────────────┘
 │            │     ┌─────────────────┐
-│            │────►│  Exec-Server    │  (Plaene ausfuehren) = Server 15
+│            │────►│  Exec-Server    │  (Plaene ausfuehren) = Server 08
 └────────────┘     └─────────────────┘
 
 VERFUEGBARE MCP-BAUSTEINE:
@@ -23,10 +23,10 @@ VERFUEGBARE MCP-BAUSTEINE:
 
 VORBEREITUNG (DREI TERMINALS + CLIENT)
 --------------------------------------
-Terminal 1: cd 14/server && dotnet run  (Port 5000 - Plan-Server)
-Terminal 2: cd 15/server && dotnet run  (Port 5001 - Executor)
+Terminal 1: cd 07/server && dotnet run  (Port 5000 - Plan-Server)
+Terminal 2: cd 08/server && dotnet run  (Port 5001 - Executor)
 Terminal 3: GitHub-MCP-Server starten   (Port 5002, optional)
-Terminal 4: cd 15/client && dotnet run
+Terminal 4: cd 08/client && dotnet run
 
 KEIN LLM NOETIG.
 Hinweis: GitHub-Server ist optional, Demo funktioniert auch ohne.
@@ -40,7 +40,7 @@ SCHRITT-FUER-SCHRITT (MENUE-BASIERT)
    -> Zeige: Client ruft GitHub-Server auf
    -> Erklaere: Erster MCP-Server im Verbund
 
-2. PLAENE LISTEN (Plan-Server 14)
+2. PLAENE LISTEN (Plan-Server 07)
    Taste: 3 (Plaene listen)
 
    -> Zeige: Client ruft Plan-Server auf
@@ -50,10 +50,10 @@ SCHRITT-FUER-SCHRITT (MENUE-BASIERT)
    Taste: 4 (Plan lesen)
    Eingabe: google-news
 
-   -> Zeige: Resource tests/plan/google-news von Server 14
+   -> Zeige: Resource tests/plan/google-news von Server 07
    -> Erklaere: Plan ist nur Beschreibung
 
-4. PLAN AUSFUEHREN (Exec-Server 15)
+4. PLAN AUSFUEHREN (Exec-Server 08)
    Taste: 5 (Plan ausfuehren)
 
    -> Zeige: Tool tests.run auf Executor-Server
@@ -84,10 +84,10 @@ Demo 01: LLM-first Einstieg
 Demo 02: LLM-first + Dokumente
 Demo 03: Orchestrator-first (Kontrast)
 Demo 04: Live-Trace (Transparenz)
-Demo 12: MCP ohne KI
-Demo 13: Protokoll-Details
-Demo 14: Server als reiner Katalog
-Demo 15: Multi-Server (dieser Abschluss)
+Demo 05: MCP ohne KI
+Demo 06: Protokoll-Details
+Demo 07: Server als reiner Katalog
+Demo 08: Multi-Server (dieser Abschluss)
 
 "Von 'Hello World' bis Enterprise-Architektur -
  MCP skaliert mit den Anforderungen."

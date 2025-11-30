@@ -1,4 +1,4 @@
-Demo 12: MCP ohne KI
+Demo 05: MCP ohne KI
 ====================
 Sonderfall | MCP als Standard-Connector
 
@@ -19,8 +19,8 @@ VERFUEGBARE MCP-BAUSTEINE:
 
 VORBEREITUNG
 ------------
-Terminal 1: cd 12/server && dotnet run
-Terminal 2: cd 12/client && dotnet run
+Terminal 1: cd 05/server && dotnet run
+Terminal 2: cd 05/client && dotnet run
 
 Server laeuft auf http://localhost:5000/sse
 KEIN LLM NOETIG. Kein API-Key erforderlich.
@@ -80,8 +80,8 @@ KERNAUSSAGE
  Ob ein LLM die Aufrufe macht oder ein Skript: egal.
  Das macht MCP universell einsetzbar."
 
-OPTIONALE UEBERLEITUNG ZU DEMO 13
----------------------------------
+UEBERLEITUNG ZU DEMO 06
+-----------------------
 "Wollen wir sehen, wie das Protokoll
  auf Byte-Ebene aussieht?
- Demo 13 zeigt den HTTP/JSON-RPC Traffic."
+ Demo 06 zeigt den HTTP/JSON-RPC Traffic."

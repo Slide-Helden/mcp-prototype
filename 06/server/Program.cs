@@ -73,7 +73,7 @@ app.MapGet("/health", () => Results.Ok(new
 
 app.MapGet("/trace/logs", (TraceStore store) => Results.Text(store.Dump(), "text/plain"));
 
-Log($"[Server] Demo 13 - Trace-Server gestartet");
+Log($"[Server] Demo 06 - Trace-Server gestartet");
 Log($"[Server] MCP SSE Endpunkt: {url}/sse");
 Log($"[Server] Trace Logs: {url}/trace/logs");
 

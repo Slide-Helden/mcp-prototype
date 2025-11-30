@@ -45,7 +45,7 @@ app.MapGet("/health", () => Results.Ok(new
     catalog = "tests/catalog"
 }));
 
-Log($"[Server] Demo 14 - Testplan-Katalog-Server gestartet");
+Log($"[Server] Demo 07 - Testplan-Katalog-Server gestartet");
 Log($"[Server] MCP SSE Endpunkt: {url}/sse");
 Log($"[Server] Health Check: {url}/health");
 

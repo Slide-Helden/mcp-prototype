@@ -36,7 +36,7 @@ app.MapGet("/health", (OpsState state) => Results.Ok(new
     sse = "/sse"
 }));
 
-Log($"[Server] Demo 12 - Ops-Server (ohne KI) gestartet");
+Log($"[Server] Demo 05 - Ops-Server (ohne KI) gestartet");
 Log($"[Server] MCP SSE Endpunkt: {url}/sse");
 Log($"[Server] Health Check: {url}/health");
 
