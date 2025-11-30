@@ -170,14 +170,32 @@ mcpClient.RegisterNotificationHandler("notifications/resources/updated",
 
 // ---------- 5) REPL: LLM-first – Modell entscheidet, welche Tools/Res/Prompts es nutzt ----------
 
-// System-Guidance: animiere das Modell, Tools zielgerichtet zu verwenden
-var history = new List<AIChatMessage> {
-    new(AIChatRole.System,
-        "Du hast Zugriff auf MCP-Tools, -Ressourcen und -Prompts über bereitgestellte Funktionen. " +
+var serverToolNames = string.Join(", ", serverTools.Select(t => t.Name));
+
+//may without time.now
+
+string systemPrompt = "Du hast Zugriff auf MCP-Tools, -Ressourcen und -Prompts über bereitgestellte Funktionen. " +
         "Wenn dir Informationen fehlen oder Fakten geprüft werden müssen: " +
         "1) rufe zuerst 'mcp.list_resources' oder 'mcp.list_prompts' auf, " +
         "2) nutze anschließend 'mcp.read_resource' oder 'mcp.get_prompt'. " +
-        "Nutze Tools nur, wenn sie relevant sind. Antworte prägnant.")
+        "Nutze Tools nur, wenn sie relevant sind. Antworte prägnant.";
+
+
+// with time.now
+/*
+string systemPrompt = $"Du hast Zugriff auf folgende Server-Tools: {serverToolNames}. " +
+        "Zusaetzlich stehen dir Client-Tools zur Verfuegung: mcp.list_resources, mcp.read_resource, mcp.list_prompts, mcp.get_prompt. " +
+        "Wenn du Zeitinformationen brauchst, nutze 'time.now' direkt. " +
+        "Fuer Ressourcen und Prompts nutze die mcp.*-Tools. " +
+        "Antworte praegnant.";
+
+*/
+
+// System-Guidance: animiere das Modell, Tools zielgerichtet zu verwenden
+
+var history = new List<AIChatMessage> {
+    new(AIChatRole.System,
+    systemPrompt)
 };
 
 PrintHelp();
