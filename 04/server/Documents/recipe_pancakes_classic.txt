@@ -1,0 +1,15 @@
+Titel: Klassische Pancakes
+Kategorie: Dessert
+Tags: pancakes, süß, frühstück, amerikanisch
+Zutaten:
+- 200 g Mehl
+- 2 Eier
+- 300 ml Milch
+- 1 EL Zucker
+- 1 TL Backpulver
+- Prise Salz
+Zubereitung:
+1. Alle Zutaten zu einem glatten Teig verrühren.
+2. Kleine Teigportionen in einer Pfanne ausbacken.
+Hinweise:
+- Mit Ahornsirup servieren.
