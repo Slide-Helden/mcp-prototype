@@ -49,8 +49,8 @@ Console.WriteLine();
 // ---------- 2) MCP-Client (HTTP/SSE) zu bereits laufendem Server ----------
 
 var url = Environment.GetEnvironmentVariable("MCP_SERVER_URL") ?? "http://localhost:5000/sse";
-IMcpClient mcpClient = await McpClientFactory.CreateAsync(
-    new SseClientTransport(new()
+var mcpClient = await McpClient.CreateAsync(
+    new HttpClientTransport(new HttpClientTransportOptions
     {
         Name = "Demo HTTP Server",
         Endpoint = new Uri(url),
@@ -63,7 +63,7 @@ Console.WriteLine();
 // ---------- 3) Server-Tools holen und LLM-first-Client-Tools definieren ----------
 
 // 3a) Echte Server-Tools
-IList<McpClientTool> serverTools = await mcpClient.ListToolsAsync();
+var serverTools = await mcpClient.ListToolsAsync();
 
 var serverPrompts = await mcpClient.ListPromptsAsync();
 var directResources = await mcpClient.ListResourcesAsync();
@@ -222,7 +222,7 @@ while (true)
 
         var aiArgs = ParseArgs(argsJson);
         var promptResult = await mcpClient.GetPromptAsync(promptName, aiArgs);
-        IList<AIChatMessage> promptMsgs = promptResult.ToChatMessages();
+        var promptMsgs = promptResult.ToChatMessages();
 
         var updates = new List<ChatResponseUpdate>();
         await foreach (var upd in chat.GetStreamingResponseAsync(

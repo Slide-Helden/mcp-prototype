@@ -1,33 +1,77 @@
-Dokumenten-Demo (02) - LLM-first Ablauf
-=======================================
+Demo 02: LLM-first mit Dokumenten
+==================================
+Aufbauend auf Demo 01 | +Suche, +Quellen | Dauer: ~7 Min
 
-Ziel: Das LLM Führt den Ablauf, nutzt Tools/Prompts/Resources eigenstaendig und zitiert Quellen.
+LERNZIEL: Das LLM durchsucht einen Dokumentenkatalog, liest Inhalte
+und zitiert Quellen - alles autonom.
 
-Vorbereitung:
-- Server (DocServer) starten: `dotnet run` in `02/server`
-- Client starten: `dotnet run` in `02/client`
+VERFUEGBARE MCP-BAUSTEINE:
+- Tools: docs.search (keyword), docs.random
+- Resources: docs/catalog, docs/document/{id}, docs/summary/{id}
+- Dokumente: csharp-linq-love, csharp-see-sharp, csharp-async-cake,
+             java-license-latte, java-oracle-fee, standup, coffee-break, etc.
 
-LLM-first Abfolge (nur freie Prompts, keine `:`-Kommandos):
-1. Freier Prompt: "Welche Tools, Prompts und Ressourcen stellt der Dokumentenserver bereit? Beschreibe kurz, wie du damit passende Witze findest und Quellen zitierst."
-2. Freier Prompt: "Finde einen positiven C#-Witz. Nutze die Suche (docs.search mit keyword \"csharp\"), lies das beste Dokument via read_resource docs/document/{id} und nenne Quelle und Titel."
-3. Freier Prompt: "Vergleiche die Dokumente csharp-linq-love, csharp-see-sharp und csharp-async-cake. Lies alle drei, erkläre, warum sie good vibes spenden, und zitiere die Quellen."
-4. Freier Prompt: "Suche gezielt nach Java (Lizenzkosten und Kaffee). Nutze docs.search, lies die relevanten Dokumente und fuehre Quellen (docs/document/{id}) an."
-5. Freier Prompt: "Fasse das Dokument standup in drei Stichpunkten zusammen. Lies dazu docs/document/standup und nenne die Quelle."
-6. Freier Prompt: "Empfiehl einen weiteren Zufallswitz mit docs.random, nenne die Quelle und begruende kurz die Wahl."
-7. Freier Prompt: "Meta: erkläre, welche MCP-Bausteine (Tools, Prompts, Resources) du genutzt hast und warum."
+VORBEREITUNG
+------------
+Terminal 1: cd 02/server && dotnet run
+Terminal 2: cd 02/client && dotnet run
 
-überleitung zu 03 - Orchestrator-first (optional)
-- Die folgenden `:`-Kommandos sind Orchestrator-first (operator-gesteuert). In Ordner 03 wird dieser Ansatz voll umgesetzt.
+Server laeuft auf http://localhost:5100/sse
 
-Orchestrator-first (optional): manuelle Befehle
-- :tools
-- :prompts
-- :resources
-- :read docs/catalog
-- :prompt docs.find_humor {"topic":"csharp"}
-- :read docs/document/csharp-linq-love
-- :read docs/document/csharp-see-sharp
-- :read docs/document/csharp-async-cake
-- :prompt docs.summarize_document {"documentId":"standup"}
-- :read docs/document/standup
+SCHRITT-FUER-SCHRITT
+--------------------
 
+1. EINSTIEG - Orientierung
+   Eingabe: Welche Tools und Ressourcen hast du fuer Dokumente?
+
+   -> Beobachte: LLM ruft mcp.list_resources, mcp.list_prompts auf
+   -> Erwartet: docs.search, docs.random, docs/catalog, etc.
+
+2. KATALOG ERKUNDEN
+   Eingabe: Zeig mir alle verfuegbaren Dokumente.
+
+   -> Beobachte: LLM liest docs/catalog
+   -> Erwartet: Markdown-Liste mit Titeln, IDs und Tags
+
+3. GEZIELTE SUCHE
+   Eingabe: Suche nach Dokumenten ueber C#.
+
+   -> Beobachte: LLM ruft docs.search mit keyword "csharp" auf
+   -> Erwartet: Liste mit csharp-linq-love, csharp-see-sharp, etc.
+
+4. DOKUMENT MIT QUELLE LESEN
+   Eingabe: Lies das Dokument csharp-linq-love und fasse es zusammen.
+
+   -> Beobachte: LLM ruft mcp.read_resource mit "docs/document/csharp-linq-love" auf
+   -> Erwartet: Volltext des Dokuments + Zusammenfassung
+
+5. VERGLEICH MEHRERER DOKUMENTE
+   Eingabe: Vergleiche csharp-linq-love und csharp-async-cake. Was haben sie gemeinsam?
+
+   -> Beobachte: LLM liest beide Dokumente nacheinander
+   -> Erwartet: Vergleich mit Quellenangaben
+
+6. ZUFALLSDOKUMENT
+   Eingabe: Gib mir ein zufaelliges Dokument.
+
+   -> Beobachte: LLM ruft docs.random auf
+   -> Erwartet: Zufaellige Empfehlung mit ID und Zusammenfassung
+
+7. JAVA-SUCHE (OPTIONAL)
+   Eingabe: Was sagen die Dokumente ueber Java?
+
+   -> Beobachte: LLM sucht mit keyword "java"
+   -> Erwartet: java-license-latte, java-oracle-fee, etc.
+
+UEBERLEITUNG ZU DEMO 03
+-----------------------
+"Bisher hat das LLM alles selbst entschieden.
+ Aber was, wenn WIR jeden Schritt kontrollieren wollen?
+ Das ist der Orchestrator-first Ansatz."
+
+NOTFALL-BEFEHLE
+---------------
+:tools              - Zeigt docs.search, docs.random
+:resources          - Zeigt docs/catalog, docs/document/{id}, docs/summary/{id}
+:read docs/catalog  - Katalog manuell lesen
+:exit               - Beenden

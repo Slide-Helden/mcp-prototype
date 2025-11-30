@@ -8,8 +8,8 @@ using System.Text;
 using System.Text.Json;
 
 var url = Environment.GetEnvironmentVariable("MCP_SERVER_URL") ?? "http://localhost:5700/sse";
-IMcpClient mcpClient = await McpClientFactory.CreateAsync(
-    new SseClientTransport(new()
+var mcpClient = await McpClient.CreateAsync(
+    new HttpClientTransport(new HttpClientTransportOptions
     {
         Name = "Trace Server",
         Endpoint = new Uri(url)
@@ -46,13 +46,13 @@ while (true)
     }
 }
 
-static async Task CallPing(IMcpClient client)
+static async Task CallPing(McpClient client)
 {
     var result = await client.CallToolAsync("trace.ping", new Dictionary<string, object?>());
     PrintContent(result.Content.ToAIContents(), "PING Antwort");
 }
 
-static async Task CallEcho(IMcpClient client)
+static async Task CallEcho(McpClient client)
 {
     Console.Write("Nachricht fuer trace.echo: ");
     var msg = Console.ReadLine() ?? "hello trace";
@@ -65,13 +65,13 @@ static async Task CallEcho(IMcpClient client)
     PrintContent(result.Content.ToAIContents(), "ECHO Antwort");
 }
 
-static async Task ReadTrace(IMcpClient client)
+static async Task ReadTrace(McpClient client)
 {
     var res = await client.ReadResourceAsync("trace/logs");
     PrintContent(res.Contents.ToAIContents(), "Server Trace Log");
 }
 
-static async Task ListTools(IMcpClient client)
+static async Task ListTools(McpClient client)
 {
     var tools = await client.ListToolsAsync();
     Console.WriteLine("Tools:");

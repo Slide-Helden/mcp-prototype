@@ -1,33 +1,92 @@
-Trace Demo (13) - MCP Traffic sichtbar machen
-=============================================
+Demo 13: Protokoll-Inspektion
+=============================
+Deep-Dive | HTTP/JSON-RPC sichtbar | Dauer: ~3 Min
 
-Ziel: Minimal-Setup, um MCP HTTP/SSE Calls mitzuschneiden (Server-Seite) und im Client ueber `trace.logs` einzusehen. Kein LLM notwendig.
+LERNZIEL: Das MCP-Protokoll auf Byte-Ebene verstehen.
+HTTP-Requests und JSON-RPC Payloads werden sichtbar.
 
-Was passiert?
-- Server loggt jede HTTP-Anfrage (inkl. MCP JSON-RPC) in ein In-Memory-Trace-Log.
-- Resource `trace/logs` gibt das Log aus.
-- Tools `trace.ping` und `trace.echo` loesen Verkehr aus.
+NEU GEGENUEBER DEMO 04:
+- Demo 04 zeigt Trace aus Client-Sicht (was passiert)
+- Demo 13 zeigt Trace aus Protokoll-Sicht (wie es aussieht)
 
-Start:
-- Server: `dotnet run` in `13/server` (Standard: http://localhost:5700, SSE `/sse`).
-- Client: `dotnet run` in `13/client` (nutzt MCP_SERVER_URL, falls gesetzt).
+VERFUEGBARE MCP-BAUSTEINE:
+- Tools: trace.ping, trace.echo (message)
+- Resources: trace/logs
 
-Client-Menue:
-1) `trace.ping` (Tool) -> ping/pong
-2) `trace.echo` (Tool) -> Text eingeben, Echo erhalten
-3) `trace.logs` lesen (Resource) -> zeigt HTTP-Requests/Antworten
-4) Tools listen
+VORBEREITUNG
+------------
+Terminal 1: cd 13/server && dotnet run
+Terminal 2: cd 13/client && dotnet run
 
-Was man sieht:
-- GET /sse Handshake und POSTs der JSON-RPC Calls im Trace.
-- Body pro Request/Response bis 800 Zeichen (Sicherheit: gekuerzt).
-- HTTP-Status/Content-Type je Eintrag.
-- Beispiel-Sequenz (Sampling):
-  - In der CLI `trace.ping` ausfuehren.
-  - Danach `trace.logs` lesen: du siehst erst den POST mit JSON-RPC-Body (methods: tools/call), danach die 200-Response.
-  - Optional `trace.echo` mit Text wie "hello trace" senden; im Log siehst du Request+Response sowie SSE-Verbindung (GET /sse).
+Server laeuft auf http://localhost:5700/sse
+KEIN LLM NOETIG.
 
-Hinweise:
-- Middleware + HttpLogging loggen nur auf Serverseite; fuer Client-seitiges Logging einfach erneut `trace.logs` lesen.
-- Grenzen: Body-Preview 800 Zeichen, 64 Eintraege im Rolling-Buffer.
-- Bei Bedarf Port via ASPNETCORE_URLS oder MCP_SERVER_URL umstellen.
+SCHRITT-FUER-SCHRITT (MENUE-BASIERT)
+------------------------------------
+
+1. PING SENDEN
+   Taste: 1 (trace.ping)
+
+   -> Zeige: Tool wird aufgerufen, Antwort kommt
+   -> Erklaere: Einfachster moeglicher MCP-Call
+
+2. TRACE LESEN - ERSTER BLICK
+   Taste: 3 (trace.logs lesen)
+
+   -> Zeige: HTTP POST mit JSON-RPC Body
+   -> Erklaere Zeile fuer Zeile:
+      - HTTP POST /message
+      - Body: {"jsonrpc":"2.0","method":"tools/call",...}
+      - Response: 200 OK
+
+3. ECHO MIT TEXT
+   Taste: 2 (trace.echo)
+   Eingabe: Hello MCP
+
+   -> Zeige: Text wird an Server gesendet und zurueckgegeben
+
+4. TRACE LESEN - ECHO SEHEN
+   Taste: 3 (trace.logs lesen)
+
+   -> Zeige: Im Body steht der Text "Hello MCP"
+   -> Erklaere: So sieht ein Tool-Parameter im Protokoll aus
+
+5. TOOLS AUFLISTEN
+   Taste: 4 (Tools listen)
+
+   -> Zeige: tools/list Methode
+   -> Im Trace: {"method":"tools/list"} ohne params
+
+WAS MAN IM TRACE SIEHT
+----------------------
+Typischer Eintrag:
+  [2024-01-15 14:23:01] HTTP POST /message
+  Body={"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"trace.ping"}}
+  --> 200 (application/json)
+
+Protokoll-Elemente:
+- jsonrpc: Protokoll-Version (immer "2.0")
+- id: Request-ID fuer Zuordnung
+- method: MCP-Methode (tools/call, resources/read, etc.)
+- params: Parameter des Aufrufs
+- result: Antwort (bei Erfolg)
+- error: Fehler (bei Misserfolg)
+
+KERNAUSSAGE
+-----------
+"MCP ist JSON-RPC 2.0 ueber HTTP.
+ Nichts Magisches - ein offener Standard.
+ Jeder HTTP-Client kann MCP sprechen."
+
+ZUSAMMENFASSUNG ALLER DEMOS
+---------------------------
+Demo 01: LLM-first Einstieg (Zeit)
+Demo 02: LLM-first mit Dokumenten
+Demo 03: Orchestrator-first (Kontrast)
+Demo 04: Live-Trace (Transparenz)
+Demo 12: MCP ohne KI
+Demo 13: Protokoll-Details (dieser Deep-Dive)
+
+"MCP ist ein Protokoll. LLMs koennen es nutzen.
+ Menschen koennen es nutzen. Skripte koennen es nutzen.
+ Die Macht liegt in der Standardisierung."

@@ -1,30 +1,87 @@
-Ops Demo ohne KI (12) - C# Edition
-==================================
+Demo 12: MCP ohne KI
+====================
+Sonderfall | MCP als Standard-Connector | Dauer: ~5 Min
 
-Ziel: MCP als Standard-Connector zeigen, ohne ein Modell einzusetzen. Fokus: typische C#-Use-Cases (aspnet, NuGet, Tests) mit einem ironischen Augenzwinkern. Der Host (CLI) ruft Tools/Resources bewusst selbst auf.
+LERNZIEL: MCP funktioniert auch komplett ohne LLM.
+Das Protokoll ist ein reiner Connector-Standard.
 
-Vorbereitung:
-- Server starten: `dotnet run` in `12/server`
-- Client starten: `dotnet run` in `12/client`
-- Kein LLM oder API-Key noetig. Default-Endpunkt: http://localhost:5600/sse (anpassbar via MCP_SERVER_URL).
+KERNAUSSAGE:
+MCP ist NICHT nur fuer KI. Es ist ein standardisiertes Protokoll
+fuer Tool/Resource-Zugriff - nutzbar in jedem Szenario.
 
-Services (Startzustand, alle ohne KI):
-- web (ASP.NET Frontend) – leicht degraded, braucht Logging-Fix.
-- worker (Hangfire) – meist stabil.
-- nuget (Private Feed) – fuer lokale Restores.
-- build (Build Agent) – maintenance, weil neue SDKs installiert werden.
-- tests (Integration Runner) – wackelt, meldet Fehler.
+USE-CASE: Ops-Dashboard fuer .NET Services
 
-Ablaufvorschlag (alles manuell, gerne humorvoll kommentieren):
-1. Option 1 "Status-Uebersicht lesen" -> Resource `ops/overview`.
-2. Option 2 "Services listen" -> Tool `ops.services.list` (Tabelle).
-3. Option 3 "Service-Details lesen" -> z. B. ID `web`, `build` oder `tests`.
-4. Option 4 "Service neu starten" -> ID `tests` oder `web`; danach Option 3 erneut zum Vergleich.
-5. Option 5 "Deployment markieren" -> ID `web`, Version `9.0.0-preview1-hotfix`, Notiz: "Fix nullable storm".
-6. Option 6 "Timeline-Notiz" -> z. B. "dotnet restore nur mit --disable-parallel".
-7. Option 7 "Timeline anzeigen" -> Resource `ops/timeline` lesen (zeigt manuelle Aktionen).
-8. Option 8 "Runbook anzeigen" -> C#-Themen wie `fix-nullable-storm`, `nuget-cache-panic`, `tests-red-green` oder Klassiker `restart-service`.
+VERFUEGBARE MCP-BAUSTEINE:
+- Tools: ops.services.list, ops.service.restart, ops.service.deploy, ops.service.maintenance, ops.timeline.note
+- Resources: ops/overview, ops/service/{id}, ops/timeline, ops/runbook/{topic}
+- Services: api, worker, billing, web, tests
+- Runbooks: restart-service, fix-nullable-storm, nuget-cache-panic, tests-red-green, deploy-blue-green, incident-first-response
 
-Hinweis:
-- Fokus: MCP-Bausteine (Tools, Resources, Runbooks) in einem reinen Operator-Flow; keine KI-Aufrufe.
-- Falls Port oder Host abweichen, MCP_SERVER_URL im Client setzen.
+VORBEREITUNG
+------------
+Terminal 1: cd 12/server && dotnet run
+Terminal 2: cd 12/client && dotnet run
+
+Server laeuft auf http://localhost:5600/sse
+KEIN LLM NOETIG. Kein API-Key erforderlich.
+
+SCHRITT-FUER-SCHRITT (MENUE-BASIERT)
+------------------------------------
+
+1. STATUS-UEBERSICHT
+   Taste: 1 (Status-Uebersicht lesen)
+
+   -> Zeige: Resource ops/overview
+   -> Erklaere: Reiner MCP-Aufruf, kein LLM
+
+2. SERVICES AUFLISTEN
+   Taste: 2 (Services listen)
+
+   -> Zeige: Tool ops.services.list gibt Tabelle zurueck
+   -> Erklaere: Tool-Call ohne LLM - der Client entscheidet
+
+3. SERVICE-DETAILS
+   Taste: 3 (Service-Details lesen)
+   Eingabe: web
+
+   -> Zeige: Resource ops/service/web
+   -> Erklaere: Dynamische URI mit Parameter
+
+4. SERVICE NEU STARTEN
+   Taste: 4 (Service neu starten)
+   Eingabe: tests
+
+   -> Zeige: Tool ops.service.restart wird aufgerufen
+   -> Erklaere: MCP kann auch Aktionen ausloesen, nicht nur lesen
+
+5. DEPLOYMENT MARKIEREN
+   Taste: 5 (Deployment markieren)
+   Eingabe: web, Version: 9.0.0, Notiz: Hotfix
+
+   -> Zeige: Tool ops.service.deploy
+   -> Erklaere: Strukturierte Parameter
+
+6. TIMELINE ANZEIGEN
+   Taste: 7 (Timeline anzeigen)
+
+   -> Zeige: Alle manuellen Aktionen protokolliert
+   -> Erklaere: Resource als Audit-Log
+
+7. RUNBOOK LESEN (OPTIONAL)
+   Taste: 8 (Runbook anzeigen)
+   Eingabe: fix-nullable-storm
+
+   -> Zeige: Runbook mit C#-spezifischen Anweisungen
+   -> Erklaere: Resources koennen auch Dokumentation sein
+
+KERNAUSSAGE
+-----------
+"MCP ist ein Protokoll - nicht mehr, nicht weniger.
+ Ob ein LLM die Aufrufe macht oder ein Skript: egal.
+ Das macht MCP universell einsetzbar."
+
+OPTIONALE UEBERLEITUNG ZU DEMO 13
+---------------------------------
+"Wollen wir sehen, wie das Protokoll
+ auf Byte-Ebene aussieht?
+ Demo 13 zeigt den HTTP/JSON-RPC Traffic."

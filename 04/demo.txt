@@ -1,40 +1,92 @@
-Rezept-Demo (04) - Ablauf
-=========================
+Demo 04: Live Communication Trace
+==================================
+Aufbauend auf Demo 01-03 | +Transparenz | Dauer: ~8 Min
 
-Vorbereitung:
-- Server (DocServer) starten, danach Client (`dotnet run` in DocHostApp).
+LERNZIEL: Die MCP-Kommunikation zwischen Client, Server und LLM
+wird in Echtzeit sichtbar. Man sieht jeden Request live.
 
-Befehlsabfolge im Client-REPL:
+NEU GEGENUEBER DEMO 01-03:
+- Farbcodierter Live-Trace in der Konsole
+- Server-seitiges Tracing
+- Protokoll-Details werden sichtbar
 
-1. System-Check
-   ----------------
-   1. :tools
-   2. :resources
-   3. Freier Prompt: "Hallo! Wer bist du und wie kannst du mir beim Kochen helfen?"
-      (Prüft, ob die "Koch-Persona" (System Prompt) korrekt geladen ist.)
+USE-CASE: Koch-Assistent mit Rezeptkatalog
 
-2. Die Katalog-Methode
-   --------------------------------------
-   4. :read docs/catalog
-   5. Freier Prompt: "Ich möchte Nudeln essen. Schau in deinen Katalog und sag mir, welche Rezepte dazu passen."
+VERFUEGBARE MCP-BAUSTEINE:
+- Tools: docs.search, docs.random, trace.stats, trace.clear
+- Resources: docs/catalog, docs/document/{id}, trace/logs, trace/logs/markdown
+- Rezepte: Gnocchi Pesto Genovese, Tomatensuppe, Carbonara, Lasagne, u.v.m.
 
-3. Detail-Abruf & Anleitung
-   ------------------------
-   6. Freier Prompt: "Das klingt gut. Wie mache ich die Gnocchi? Lies das Rezept und leite mich an."
-   7. :read docs/document/recipe_gnocchi_pesto_genovese
+VORBEREITUNG
+------------
+Terminal 1: cd 04/server && dotnet run
+Terminal 2: cd 04/client && dotnet run
 
-4. Der "Kühlschrank-Test" (Inferenz)
-   ---------------------------------
-   8. Freier Prompt: "Ich habe noch Sahne und Eier übrig. Welches Rezept aus deiner Liste könnte ich damit kochen?"
+Server laeuft auf http://localhost:5200/sse
+Live-Trace ist standardmaessig AKTIV.
 
-5. Vergleich & Analyse (Multi-File)
-   --------------------------------
-   9. Freier Prompt: "Ich schwanke zwischen den Gnocchi und der Tomatensuppe. Welches Gericht hat weniger Zutaten?"
+FARBEN IM LIVE-TRACE
+--------------------
+CYAN:    MCP-Kommunikation (Client <-> Server)
+GELB:    LLM-Kommunikation (Client <-> LLM)
+MAGENTA: Tool-Aufrufe (LLM ruft Tools auf)
 
-6. Kontext & Gedächtnis
-   --------------------
-   10. Freier Prompt: "Erstelle mir eine Einkaufsliste für die Gnocchi, aber rechne die Mengen für die doppelte Personenanzahl hoch."
+SCHRITT-FUER-SCHRITT
+--------------------
 
-7. Negative Tests (Halluzination vermeiden)
-   ----------------------------------------
-   11. Freier Prompt: "Wie mache ich Sushi?"
+1. EINSTIEG - Rezepte erkunden
+   Eingabe: Welche Rezepte hast du?
+
+   -> LIVE-TRACE zeigt:
+      [LLM] USER->CLIENT: Nutzer-Eingabe
+      [LLM] CLIENT->LLM: Chat-Request
+      [TOOL] LLM->CLIENT: mcp.read_resource(docs/catalog)
+      [MCP] CLIENT->SERVER: resources/read
+      [MCP] SERVER->CLIENT: resources/read: ... Zeichen
+
+   -> Erklaere: Jede Zeile = ein Schritt in der Kommunikation
+
+2. EINZELNES REZEPT
+   Eingabe: Wie mache ich die Gnocchi?
+
+   -> LIVE-TRACE zeigt Tool-Call fuer docs/document/recipe_gnocchi...
+   -> Erklaere: LLM findet ID im Katalog, liest dann das Rezept
+
+3. VERGLEICH (MULTI-TOOL)
+   Eingabe: Vergleiche Gnocchi und Tomatensuppe - welches ist schneller?
+
+   -> LIVE-TRACE zeigt MEHRERE Tool-Calls nacheinander
+   -> Erklaere: LLM orchestriert mehrere Abrufe selbststaendig
+
+4. HALLUZINATIONS-TEST
+   Eingabe: Wie mache ich Sushi?
+
+   -> LIVE-TRACE zeigt: LLM sucht, findet nichts
+   -> Erwartet: Ehrliche Antwort "Kein Sushi-Rezept vorhanden"
+   -> Erklaere: Grounding verhindert Halluzination
+
+5. SERVER-TRACE ANZEIGEN
+   Eingabe: :trace:server
+
+   -> Zeigt die Server-Perspektive: HTTP-Requests, JSON-RPC
+   -> Erklaere: Gleiche Kommunikation, andere Sichtweise
+
+TRACE-BEFEHLE (waehrend Demo nutzbar)
+-------------------------------------
+:trace:off    - Live-Trace deaktivieren (ruhigere Ausgabe)
+:trace:live   - Live-Trace wieder aktivieren
+:trace        - Bisherigen Verlauf anzeigen
+:trace:server - Server-Trace abrufen
+:trace:clear  - Trace-Verlauf leeren
+
+KERNAUSSAGE
+-----------
+"Jetzt sehen wir, was 'unter der Haube' passiert:
+ JSON-RPC Aufrufe, HTTP Requests, Tool-Calls.
+ MCP ist ein standardisiertes Protokoll - kein Voodoo."
+
+OPTIONALE UEBERLEITUNG ZU DEMO 12
+---------------------------------
+"Bisher brauchten wir immer ein LLM.
+ Aber MCP funktioniert auch ohne KI -
+ als reiner Standard-Connector."

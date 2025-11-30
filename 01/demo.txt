@@ -1,23 +1,66 @@
-LLM-first Zeit-Demo (01)
-========================
+Demo 01: LLM-first mit Zeit-Tools
+==================================
+Einstieg | Basis-Demo | Dauer: ~5 Min
 
-Ziel: Das LLM Führt den Ablauf, entdeckt Tools/Prompts/Resources selbst und ruft sie eigenstaendig auf (Function Calls).
+LERNZIEL: Das LLM entdeckt MCP-Bausteine (Tools, Resources, Prompts)
+selbststaendig und ruft sie autonom auf (Function Calls).
 
-Vorbereitung:
-- Server starten: `dotnet run` in `01/server`
-- Client starten: `dotnet run` in `01/client`
-- Optional: Breakpoints in Client-Toolfunktionen setzen (z. B. `mcp.list_resources`, `mcp.read_resource`, `mcp.list_prompts`, `mcp.get_prompt`, `time.now`) und Debugger an den Client-Prozess anhaengen.
+VERFUEGBARE MCP-BAUSTEINE:
+- Tool: time.now (mit optionalem timezone Parameter)
+- Resources: time/about, time/cities, time/city/{city}
+- Prompts: time.prepare_response, time.city_briefing
+- Client-Tools: mcp.list_resources, mcp.read_resource, mcp.list_prompts, mcp.get_prompt
 
-Ablauf im Client (nur freie Prompts, keine `:`-Kommandos):
-1. Freier Prompt: "Welche Tools, Prompts und Ressourcen stehen dir per MCP zur Verfuegung? erkläre kurz, wie du sie für Zeitfragen nutzt."
-2. Freier Prompt: "Gib mir die aktuelle Uhrzeit in UTC. Nutze das Tool time.now und formatiere als ISO-8601."
-3. Freier Prompt: "Plane einen Meeting-Vorschlag für die Zeitzone Europe/Berlin. Ziehe Ressourcen wie time/about und time/city/berlin in Betracht und nutze bei Bedarf time.now mit timezone=Europe/Berlin."
-4. Freier Prompt: "Vergleiche die aktuelle lokale Zeit in Berlin, New York und Seoul. Nenne die verwendeten Zeitzonen-IDs und gib die Zeiten im ISO-Format aus."
-5. Freier Prompt: "Fasse zusammen, welche MCP-Bausteine (Tools, Prompts, Resources) du eingesetzt hast und warum."
+VORBEREITUNG
+------------
+Terminal 1: cd 01/server && dotnet run
+Terminal 2: cd 01/client && dotnet run
 
-Hinweis:
-- LLM-first bedeutet: Das Modell entscheidet selbst, welche Tools/Prompts/Resources es aufruft. Manuelle `:`-Befehle werden hier bewusst nicht verwendet.
+Server laeuft auf http://localhost:5000/sse
 
-Optional (Orchestrator-first, als Bruecke zu 03):
-- Wenn du die gleichen Operationen manuell inspizieren willst, nutze per Befehl z. B. `:tools`, `:prompts`, `:resources`, `:read time/about` oder `:prompt time.prepare_response {"timezone":"Europe/Berlin","request":"Plane einen Meeting-Vorschlag"}`.
+SCHRITT-FUER-SCHRITT
+--------------------
 
+1. EINSTIEG - Was kann MCP?
+   Eingabe: Welche Tools, Prompts und Ressourcen stehen dir zur Verfuegung?
+
+   -> Beobachte: LLM ruft mcp.list_resources, mcp.list_prompts auf
+   -> Erwartet: Liste mit time.now, time/about, time/cities, etc.
+
+2. EINFACHER TOOL-CALL
+   Eingabe: Wie spaet ist es gerade in UTC?
+
+   -> Beobachte: LLM ruft time.now auf (ohne timezone Parameter)
+   -> Erwartet: IsoUtc, IsoLocal, LocalFormatted, TimeZone, EpochSecondsUtc
+
+3. RESOURCE LESEN
+   Eingabe: Was weisst du ueber Berlin als Zeitzone? Lies die passende Resource.
+
+   -> Beobachte: LLM ruft mcp.read_resource mit "time/city/berlin" auf
+   -> Erwartet: JSON mit city, timezoneId, localTime, offsetHours
+
+4. MULTI-TOOL VERGLEICH
+   Eingabe: Vergleiche die aktuelle Zeit in Berlin, New York und Seoul.
+
+   -> Beobachte: LLM ruft time.now mehrfach mit verschiedenen Zeitzonen auf
+   -> Hinweis: Gueltige Zeitzonen sind Europe/Berlin, America/New_York, Asia/Seoul
+
+5. RESOURCE-LISTE ERKUNDEN
+   Eingabe: Welche Staedte sind in den Resources verfuegbar?
+
+   -> Beobachte: LLM liest time/cities Resource
+   -> Erwartet: Berlin, New York, Sydney, Seoul, Sao Paulo
+
+UEBERLEITUNG ZU DEMO 02
+-----------------------
+"Wir haben gesehen, wie das LLM Zeit-Tools nutzt.
+ In der naechsten Demo wechseln wir zu Dokumenten -
+ das LLM sucht, liest und zitiert Quellen."
+
+NOTFALL-BEFEHLE (falls LLM haengt)
+----------------------------------
+:tools     - Zeigt Server-Tools (time.now)
+:prompts   - Zeigt Prompts (time.prepare_response, time.city_briefing)
+:resources - Zeigt Resources und Templates
+:read time/about - Liest die About-Resource manuell
+:exit      - Beendet den Client

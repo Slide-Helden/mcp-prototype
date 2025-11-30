@@ -48,9 +48,9 @@ Console.WriteLine();
 
 // ---------- 2) MCP-Client zum Dokumenten-Server ----------
 
-var url = "http://localhost:5200/sse";
-IMcpClient mcpClient = await McpClientFactory.CreateAsync(
-    new SseClientTransport(new()
+var url = "http://localhost:5100/sse";
+var mcpClient = await McpClient.CreateAsync(
+    new HttpClientTransport(new HttpClientTransportOptions
     {
         Name = "Document HTTP Server",
         Endpoint = new Uri(url)
@@ -61,7 +61,7 @@ Console.WriteLine();
 
 // ---------- 3) Inventory: Tools, Prompts, Resources ----------
 
-IList<McpClientTool> serverTools = await mcpClient.ListToolsAsync();
+var serverTools = await mcpClient.ListToolsAsync();
 var serverPrompts = await mcpClient.ListPromptsAsync();
 var directResources = await mcpClient.ListResourcesAsync();
 var resourceTemplates = await mcpClient.ListResourceTemplatesAsync();
@@ -217,7 +217,7 @@ while (true)
 
         var aiArgs = ParseArgs(argsJson);
         var promptResult = await mcpClient.GetPromptAsync(promptName, aiArgs);
-        IList<AIChatMessage> promptMsgs = promptResult.ToChatMessages();
+        var promptMsgs = promptResult.ToChatMessages();
 
         var updates = new List<ChatResponseUpdate>();
         await foreach (var update in chat.GetStreamingResponseAsync(

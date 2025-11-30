@@ -20,7 +20,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
 
     - name: Restore dependencies client
       run: dotnet restore
@@ -69,6 +69,22 @@ jobs:
     - name: Build operator server
       run: dotnet publish --no-restore
       working-directory: ./03/server
+
+    - name: Restore dependencies recipe client (demo 04)
+      run: dotnet restore
+      working-directory: ./04/client/
+
+    - name: Build recipe client (demo 04)
+      run: dotnet publish --no-restore
+      working-directory: ./04/client/
+
+    - name: Restore dependencies recipe server (demo 04)
+      run: dotnet restore
+      working-directory: ./04/server/
+
+    - name: Build recipe server (demo 04)
+      run: dotnet publish --no-restore
+      working-directory: ./04/server/
 
     - name: Restore dependencies ops client (demo 12)
       run: dotnet restore

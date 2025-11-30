@@ -7,8 +7,8 @@ using System.Text;
 using System.Text.Json;
 
 var url = Environment.GetEnvironmentVariable("MCP_SERVER_URL") ?? "http://localhost:5800/sse";
-IMcpClient mcpClient = await McpClientFactory.CreateAsync(
-    new SseClientTransport(new()
+var mcpClient = await McpClient.CreateAsync(
+    new HttpClientTransport(new HttpClientTransportOptions
     {
         Name = "Plan Server",
         Endpoint = new Uri(url)
@@ -39,13 +39,13 @@ while (true)
     }
 }
 
-static async Task ListPlans(IMcpClient client)
+static async Task ListPlans(McpClient client)
 {
     var res = await client.ReadResourceAsync("tests/catalog");
     PrintContent(res.Contents.ToAIContents(), "Plan-Katalog");
 }
 
-static async Task ReadPlan(IMcpClient client)
+static async Task ReadPlan(McpClient client)
 {
     Console.Write("Plan-Slug (z. B. google-news): ");
     var slug = (Console.ReadLine() ?? "google-news").Trim();

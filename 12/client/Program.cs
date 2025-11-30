@@ -12,8 +12,8 @@ const string ServiceUriTemplate = "ops/service/{0}";
 const string RunbookUriTemplate = "ops/runbook/{0}";
 
 var url = Environment.GetEnvironmentVariable("MCP_SERVER_URL") ?? "http://localhost:5600/sse";
-IMcpClient mcpClient = await McpClientFactory.CreateAsync(
-    new SseClientTransport(new()
+var mcpClient = await McpClient.CreateAsync(
+    new HttpClientTransport(new HttpClientTransportOptions
     {
         Name = "Ops Server (no AI)",
         Endpoint = new Uri(url)
@@ -63,13 +63,13 @@ while (true)
     }
 }
 
-static async Task ShowOverviewAsync(IMcpClient client)
+static async Task ShowOverviewAsync(McpClient client)
 {
     var result = await client.ReadResourceAsync(OverviewUri);
     PrintText(result.Contents.ToAIContents());
 }
 
-static async Task ListServicesAsync(IMcpClient client)
+static async Task ListServicesAsync(McpClient client)
 {
     var result = await client.CallToolAsync("ops.services.list", new Dictionary<string, object?>());
     var text = ExtractText(result.Content.ToAIContents());
@@ -80,7 +80,7 @@ static async Task ListServicesAsync(IMcpClient client)
     }
 }
 
-static async Task ShowServiceAsync(IMcpClient client)
+static async Task ShowServiceAsync(McpClient client)
 {
     var id = Prompt("Service-ID (z. B. api, worker, billing)");
     if (string.IsNullOrWhiteSpace(id)) return;
@@ -90,7 +90,7 @@ static async Task ShowServiceAsync(IMcpClient client)
     PrintText(result.Contents.ToAIContents());
 }
 
-static async Task RestartServiceAsync(IMcpClient client)
+static async Task RestartServiceAsync(McpClient client)
 {
     var id = Prompt("Service-ID fuer Restart");
     if (string.IsNullOrWhiteSpace(id)) return;
@@ -103,7 +103,7 @@ static async Task RestartServiceAsync(IMcpClient client)
     PrintActionResult(result.Content.ToAIContents());
 }
 
-static async Task DeployServiceAsync(IMcpClient client)
+static async Task DeployServiceAsync(McpClient client)
 {
     var id = Prompt("Service-ID fuer Deployment");
     var version = Prompt("Zielversion (z. B. 1.4.3-pre)");
@@ -120,7 +120,7 @@ static async Task DeployServiceAsync(IMcpClient client)
     PrintActionResult(result.Content.ToAIContents());
 }
 
-static async Task AddNoteAsync(IMcpClient client)
+static async Task AddNoteAsync(McpClient client)
 {
     var note = Prompt("Notiztext fuer Timeline");
     var actor = Prompt("Akteur (optional)");
@@ -135,13 +135,13 @@ static async Task AddNoteAsync(IMcpClient client)
     PrintActionResult(result.Content.ToAIContents());
 }
 
-static async Task ShowTimelineAsync(IMcpClient client)
+static async Task ShowTimelineAsync(McpClient client)
 {
     var result = await client.ReadResourceAsync(TimelineUri);
     PrintText(result.Contents.ToAIContents());
 }
 
-static async Task ShowRunbookAsync(IMcpClient client)
+static async Task ShowRunbookAsync(McpClient client)
 {
     Console.WriteLine("Verfuegbare Topics: restart-service, deploy-blue-green, incident-first-response");
     var topic = Prompt("Runbook Topic");

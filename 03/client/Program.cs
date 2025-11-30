@@ -33,8 +33,8 @@ IChatClient chat =
 Console.WriteLine($"[Chat] Orchestrator-first manual mode using model {modelId}");
 
 var url = Environment.GetEnvironmentVariable("MCP_SERVER_URL") ?? "http://localhost:5400/sse";
-IMcpClient mcpClient = await McpClientFactory.CreateAsync(
-    new SseClientTransport(new()
+var mcpClient = await McpClient.CreateAsync(
+    new HttpClientTransport(new HttpClientTransportOptions
     {
         Name = "Operator Server",
         Endpoint = new Uri(url)
@@ -82,7 +82,7 @@ while (true)
     }
 }
 
-static async Task ShowCatalogAsync(IMcpClient client)
+static async Task ShowCatalogAsync(McpClient client)
 {
     var result = await client.ReadResourceAsync(CatalogUri);
     var text = string.Join("\n", result.Contents.ToAIContents().OfType<TextContent>().Select(t => t.Text));
@@ -90,7 +90,7 @@ static async Task ShowCatalogAsync(IMcpClient client)
     Console.WriteLine(text);
 }
 
-static async Task RunSearchAsync(IMcpClient client)
+static async Task RunSearchAsync(McpClient client)
 {
     Console.Write("Suchbegriff: ");
     var keyword = Console.ReadLine() ?? string.Empty;
@@ -119,7 +119,7 @@ static async Task RunSearchAsync(IMcpClient client)
     }
 }
 
-static async Task ReadDocumentAsync(IMcpClient client, IDictionary<string, string> collected)
+static async Task ReadDocumentAsync(McpClient client, IDictionary<string, string> collected)
 {
     Console.Write("Dokument-ID: ");
     var id = Console.ReadLine();

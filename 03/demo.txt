@@ -1,18 +1,80 @@
-Operator-gefuehrte Demo (03)
-===========================
+Demo 03: Orchestrator-first (Kontrast)
+======================================
+Kontrast zu Demo 01/02 | Manueller Ablauf | Dauer: ~5 Min
 
-Ziel: Zeige die Gegenueberstellung zum LLM-first Ansatz. Hier steht der Operator im Mittelpunkt (Orchestrator-first): Er waehlt jede MCP-Aktion bewusst, sammelt Inhalte und ruft erst am Ende das LLM auf.
+LERNZIEL: Der Mensch (Orchestrator) steuert jeden MCP-Aufruf bewusst.
+Das LLM wird erst am Ende fuer die Zusammenfassung genutzt.
 
-Vorbereitung:
-- Server starten: `dotnet run` in `03/server`
-- Client starten: `dotnet run` in `03/client`
+KONTRAST ZU DEMO 01/02:
+- LLM-first:        LLM entscheidet, welche Tools es aufruft
+- Orchestrator-first: Mensch/Code entscheidet jeden Schritt
 
-Ablauf im Menue:
-1. Option 1 "Liste Katalog" -> Ueberblick verschaffen, welche Dokumente existieren.
-2. Option 2 "Suche per Tool" -> Suchbegriff `coffee` eingeben (demonstriert manuellen Tool-Call).
-3. Option 3 "Dokument lesen" -> ID `manual-coffee` lesen, Text inspizieren.
-4. Option 3 erneut -> ID `manual-standup` lesen, Text ebenfalls hinzufuegen.
-5. Option 4 "Gesammelte Dokumente anzeigen" -> pruefen, was im Zwischenspeicher liegt.
-6. Option 5 "Zusammenfassung per LLM" -> erzeugt erst jetzt eine Antwort, basierend auf den zuvor manuell gesammelten Ressourcen.
+WANN ORCHESTRATOR-FIRST?
+- Compliance: Jeder Schritt muss nachvollziehbar sein
+- Kosten: LLM-Aufrufe minimieren
+- Kontrolle: Definierter Ablauf ohne Ueberraschungen
 
-Hinweis: Zwischen den Schritten kann der Operator freie Kommentare geben (z. B. Moderation fuer das Publikum), das System ruft jedoch keine Tools automatisch auf.
+VERFUEGBARE MCP-BAUSTEINE:
+- Tool: manual.docs.search (keyword)
+- Resources: manual/docs/catalog, manual/docs/document/{id}
+- Dokumente: manual-coffee, manual-overview, manual-standup
+
+VORBEREITUNG
+------------
+Terminal 1: cd 03/server && dotnet run
+Terminal 2: cd 03/client && dotnet run
+
+Server laeuft auf http://localhost:5400/sse
+
+SCHRITT-FUER-SCHRITT (MENUE-BASIERT)
+------------------------------------
+
+1. KATALOG ANZEIGEN
+   Taste: 1 (Liste Katalog)
+
+   -> Erklaere: WIR entscheiden, wann der Katalog gelesen wird
+   -> Zeige: Dokument-IDs fuer naechste Schritte
+
+2. SUCHE AUSFUEHREN
+   Taste: 2 (Suche per Tool)
+   Eingabe: coffee
+
+   -> Erklaere: WIR geben den Suchbegriff vor, nicht das LLM
+   -> Zeige: Suchergebnisse mit IDs
+
+3. ERSTES DOKUMENT LESEN
+   Taste: 3 (Dokument lesen)
+   Eingabe: manual-coffee
+
+   -> Erklaere: Dokument wird in Zwischenspeicher gelegt
+   -> Zeige: Text erscheint, kein LLM-Aufruf bisher
+
+4. ZWEITES DOKUMENT LESEN
+   Taste: 3 (Dokument lesen)
+   Eingabe: manual-standup
+
+   -> Erklaere: Wir sammeln mehrere Dokumente manuell
+
+5. ZWISCHENSPEICHER PRUEFEN
+   Taste: 4 (Gesammelte Dokumente anzeigen)
+
+   -> Erklaere: Alles was bisher passiert ist, war OHNE LLM
+   -> Zeige: Liste der gesammelten Dokumente
+
+6. LLM EINSETZEN
+   Taste: 5 (Zusammenfassung per LLM)
+
+   -> Erklaere: JETZT ERST rufen wir das LLM auf
+   -> Zeige: LLM fasst die manuell gesammelten Dokumente zusammen
+
+KERNAUSSAGE
+-----------
+"In Demo 01/02 hat das LLM entschieden, was es liest.
+ Hier haben WIR entschieden - und das LLM nur am Ende genutzt.
+ Beide Ansaetze haben ihre Berechtigung."
+
+UEBERLEITUNG ZU DEMO 04
+-----------------------
+"Jetzt wissen wir, WAS passiert.
+ Aber wie sieht die Kommunikation im Detail aus?
+ In Demo 04 machen wir das Protokoll sichtbar."

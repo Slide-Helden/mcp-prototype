@@ -10,22 +10,22 @@ var ghUrl = Environment.GetEnvironmentVariable("MCP_GITHUB_SERVER_URL") ?? "http
 var planUrl = Environment.GetEnvironmentVariable("MCP_PLAN_SERVER_URL") ?? "http://localhost:5800/sse";
 var execUrl = Environment.GetEnvironmentVariable("MCP_EXEC_SERVER_URL") ?? "http://localhost:5850/sse";
 
-IMcpClient ghClient = await McpClientFactory.CreateAsync(
-    new SseClientTransport(new()
+var ghClient = await McpClient.CreateAsync(
+    new HttpClientTransport(new HttpClientTransportOptions
     {
         Name = "GitHub Server",
         Endpoint = new Uri(ghUrl)
     }));
 
-IMcpClient planClient = await McpClientFactory.CreateAsync(
-    new SseClientTransport(new()
+var planClient = await McpClient.CreateAsync(
+    new HttpClientTransport(new HttpClientTransportOptions
     {
         Name = "Plan Server",
         Endpoint = new Uri(planUrl)
     }));
 
-IMcpClient execClient = await McpClientFactory.CreateAsync(
-    new SseClientTransport(new()
+var execClient = await McpClient.CreateAsync(
+    new HttpClientTransport(new HttpClientTransportOptions
     {
         Name = "Executor Server",
         Endpoint = new Uri(execUrl)
@@ -70,7 +70,7 @@ while (true)
     }
 }
 
-static async Task SearchBugsAndShowPlans(IMcpClient ghClient, IMcpClient planClient)
+static async Task SearchBugsAndShowPlans(McpClient ghClient, McpClient planClient)
 {
     Console.Write("GitHub-Suchstring (z. B. repo:owner/repo is:issue is:open label:bug): ");
     var query = (Console.ReadLine() ?? "is:issue is:open label:bug").Trim();
@@ -100,13 +100,13 @@ static async Task SearchBugsAndShowPlans(IMcpClient ghClient, IMcpClient planCli
     PrintContent(catalog.Contents.ToAIContents(), "Testplan-Katalog (Server 1)");
 }
 
-static async Task ShowCatalog(IMcpClient planClient)
+static async Task ShowCatalog(McpClient planClient)
 {
     var res = await planClient.ReadResourceAsync("tests/catalog");
     PrintContent(res.Contents.ToAIContents(), "Plan-Katalog (Server 1)");
 }
 
-static async Task ReadPlan(IMcpClient planClient)
+static async Task ReadPlan(McpClient planClient)
 {
     Console.Write("Plan-Slug (z. B. google-news): ");
     var slug = (Console.ReadLine() ?? "google-news").Trim();
@@ -114,7 +114,7 @@ static async Task ReadPlan(IMcpClient planClient)
     PrintContent(res.Contents.ToAIContents(), $"Plan {slug} (Server 1)");
 }
 
-static async Task RunPlan(IMcpClient execClient)
+static async Task RunPlan(McpClient execClient)
 {
     Console.Write("Plan-Name fuer Ausfuehrung (z. B. google-news): ");
     var plan = (Console.ReadLine() ?? "google-news").Trim();
@@ -127,7 +127,7 @@ static async Task RunPlan(IMcpClient execClient)
     PrintContent(result.Content.ToAIContents(), $"Testergebnis {plan} (Server 2)");
 }
 
-static async Task ListExecutorTools(IMcpClient execClient)
+static async Task ListExecutorTools(McpClient execClient)
 {
     var tools = await execClient.ListToolsAsync();
     Console.WriteLine("Executor-Tools (Server 2):");
@@ -173,7 +173,7 @@ static string ExtractText(IEnumerable<AIContent> content)
     return sb.ToString();
 }
 
-static async Task<string?> PickIssueSearchToolAsync(IMcpClient ghClient)
+static async Task<string?> PickIssueSearchToolAsync(McpClient ghClient)
 {
     var tools = await ghClient.ListToolsAsync();
     var preferred = new[]
@@ -202,7 +202,7 @@ static Dictionary<string, object?> BuildIssueSearchArgs(string query)
     return args;
 }
 
-static async Task ListGitHubTools(IMcpClient ghClient)
+static async Task ListGitHubTools(McpClient ghClient)
 {
     var tools = await ghClient.ListToolsAsync();
     Console.WriteLine("GitHub-Tools:");

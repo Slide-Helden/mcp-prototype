@@ -1,0 +1,93 @@
+Demo 15: Multi-Server-Orchestrierung
+=====================================
+Fortgeschritten | Drei Server | Dauer: ~5 Min
+
+LERNZIEL: Ein Client kann mehrere MCP-Server gleichzeitig nutzen.
+Hier: GitHub (Issues) + Katalog (Plaene) + Executor (Ausfuehrung)
+
+ARCHITEKTUR:
+┌────────────┐     ┌─────────────────┐
+│  CLIENT    │────►│  GitHub-Server  │  (Issues suchen)
+│            │     └─────────────────┘
+│            │     ┌─────────────────┐
+│            │────►│  Plan-Server    │  (Plaene lesen) = Server 14
+│            │     └─────────────────┘
+│            │     ┌─────────────────┐
+│            │────►│  Exec-Server    │  (Plaene ausfuehren) = Server 15
+└────────────┘     └─────────────────┘
+
+VERFUEGBARE MCP-BAUSTEINE:
+- GitHub-Server (5900): issues.search (oder aehnlich)
+- Plan-Server (5800): Resources tests/catalog, tests/plan/{slug}
+- Executor-Server (5850): Tools tests.list, tests.run
+
+VORBEREITUNG (DREI TERMINALS + CLIENT)
+--------------------------------------
+Terminal 1: cd 14/server && dotnet run  (Port 5800 - Plan-Server)
+Terminal 2: cd 15/server && dotnet run  (Port 5850 - Executor)
+Terminal 3: GitHub-MCP-Server starten   (Port 5900, optional)
+Terminal 4: cd 15/client && dotnet run
+
+KEIN LLM NOETIG.
+Hinweis: GitHub-Server ist optional, Demo funktioniert auch ohne.
+
+SCHRITT-FUER-SCHRITT (MENUE-BASIERT)
+------------------------------------
+
+1. BUGS SUCHEN (GitHub-Server)
+   Taste: 1 (Bugs suchen)
+
+   -> Zeige: Client ruft GitHub-Server auf
+   -> Erklaere: Erster MCP-Server im Verbund
+
+2. PLAENE LISTEN (Plan-Server 14)
+   Taste: 3 (Plaene listen)
+
+   -> Zeige: Client ruft Plan-Server auf
+   -> Erklaere: Zweiter MCP-Server, gleicher Client
+
+3. PLAN LESEN
+   Taste: 4 (Plan lesen)
+   Eingabe: google-news
+
+   -> Zeige: Resource tests/plan/google-news von Server 14
+   -> Erklaere: Plan ist nur Beschreibung
+
+4. PLAN AUSFUEHREN (Exec-Server 15)
+   Taste: 5 (Plan ausfuehren)
+
+   -> Zeige: Tool tests.run auf Executor-Server
+   -> Erklaere: Dritter Server fuehrt tatsaechlich aus!
+   -> Zeige: Ergebnis der HTTP-Requests
+
+5. EXECUTOR-TOOLS ANZEIGEN
+   Taste: 6 (Executor-Tools listen)
+
+   -> Zeige: tools/list auf Executor-Server
+   -> Erklaere: Jeder Server hat eigene Tools
+
+FLOW ZUSAMMENFASSUNG
+--------------------
+1. GitHub: Bug-ID finden (z.B. "test-google-news fehlgeschlagen")
+2. Katalog: Passenden Testplan nachschlagen
+3. Executor: Plan ausfuehren, Ergebnis pruefen
+
+KERNAUSSAGE
+-----------
+"Ein Client, mehrere Server.
+ Jeder Server hat seine Verantwortung.
+ Das ist die Skalierung mit MCP."
+
+GESAMTUEBERSICHT ALLER DEMOS
+----------------------------
+Demo 01: LLM-first Einstieg
+Demo 02: LLM-first + Dokumente
+Demo 03: Orchestrator-first (Kontrast)
+Demo 04: Live-Trace (Transparenz)
+Demo 12: MCP ohne KI
+Demo 13: Protokoll-Details
+Demo 14: Server als reiner Katalog
+Demo 15: Multi-Server (dieser Abschluss)
+
+"Von 'Hello World' bis Enterprise-Architektur -
+ MCP skaliert mit den Anforderungen."
