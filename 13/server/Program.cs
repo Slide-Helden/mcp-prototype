@@ -6,7 +6,7 @@ static void Log(string message) => Console.WriteLine($"[{DateTime.Now:HH:mm:ss.f
 
 var builder = WebApplication.CreateBuilder(args);
 
-var url = Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:5700";
+var url = Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:5000";
 builder.WebHost.UseUrls(url);
 Log($"[Server] Configuring on {url}...");
 

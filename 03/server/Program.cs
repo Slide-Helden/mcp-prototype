@@ -13,7 +13,7 @@ builder.Logging.AddSimpleConsole(options =>
 });
 builder.Logging.SetMinimumLevel(LogLevel.Information);
 
-var url = Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:5400";
+var url = Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:5000";
 builder.WebHost.UseUrls(url);
 Log($"[Server] Configuring on {url}...");
 

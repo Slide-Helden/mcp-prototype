@@ -1,8 +1,8 @@
 Demo 02: LLM-first mit Dokumenten
 ==================================
-Aufbauend auf Demo 01 | +Suche, +Quellen | Dauer: ~7 Min
+Aufbauend auf Demo 01 | +Suche, +Quellen
 
-LERNZIEL: Das LLM durchsucht einen Dokumentenkatalog, liest Inhalte
+WAS WIR ZEIGEN: Das LLM durchsucht einen Dokumentenkatalog, liest Inhalte
 und zitiert Quellen - alles autonom.
 
 VERFUEGBARE MCP-BAUSTEINE:
@@ -16,7 +16,7 @@ VORBEREITUNG
 Terminal 1: cd 02/server && dotnet run
 Terminal 2: cd 02/client && dotnet run
 
-Server laeuft auf http://localhost:5100/sse
+Server laeuft auf http://localhost:5000/sse
 
 SCHRITT-FUER-SCHRITT
 --------------------

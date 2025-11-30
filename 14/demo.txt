@@ -1,8 +1,8 @@
 Demo 14: Testplan-Katalog (nur lesen)
 =====================================
-Spezialisiert | Nur Resources | Dauer: ~3 Min
+Spezialisiert | Nur Resources
 
-LERNZIEL: MCP-Server kann auch rein als Daten-Provider dienen.
+WAS WIR ZEIGEN: MCP-Server kann auch rein als Daten-Provider dienen.
 Hier: Testplaene als Resources ohne ausfuehrbare Tools.
 
 DESIGN-ENTSCHEIDUNG:
@@ -20,7 +20,7 @@ VORBEREITUNG
 Terminal 1: cd 14/server && dotnet run
 Terminal 2: cd 14/client && dotnet run
 
-Server laeuft auf http://localhost:5800/sse
+Server laeuft auf http://localhost:5000/sse
 KEIN LLM NOETIG.
 
 SCHRITT-FUER-SCHRITT (MENUE-BASIERT)

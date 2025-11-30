@@ -1,8 +1,8 @@
 Demo 03: Orchestrator-first (Kontrast)
 ======================================
-Kontrast zu Demo 01/02 | Manueller Ablauf | Dauer: ~5 Min
+Kontrast zu Demo 01/02 | Manueller Ablauf
 
-LERNZIEL: Der Mensch (Orchestrator) steuert jeden MCP-Aufruf bewusst.
+WAS WIR ZEIGEN: Der Mensch (Orchestrator) steuert jeden MCP-Aufruf bewusst.
 Das LLM wird erst am Ende fuer die Zusammenfassung genutzt.
 
 KONTRAST ZU DEMO 01/02:
@@ -24,7 +24,7 @@ VORBEREITUNG
 Terminal 1: cd 03/server && dotnet run
 Terminal 2: cd 03/client && dotnet run
 
-Server laeuft auf http://localhost:5400/sse
+Server laeuft auf http://localhost:5000/sse
 
 SCHRITT-FUER-SCHRITT (MENUE-BASIERT)
 ------------------------------------

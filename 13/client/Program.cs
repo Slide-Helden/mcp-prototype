@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 
-var url = Environment.GetEnvironmentVariable("MCP_SERVER_URL") ?? "http://localhost:5700/sse";
+var url = Environment.GetEnvironmentVariable("MCP_SERVER_URL") ?? "http://localhost:5000/sse";
 Log($"[MCP] Connecting to {url}...");
 var mcpClient = await McpClient.CreateAsync(
     new HttpClientTransport(new HttpClientTransportOptions
@@ -17,6 +17,17 @@ var mcpClient = await McpClient.CreateAsync(
     }));
 
 Log($"[MCP] Connected to {url}");
+
+// Inventory laden und anzeigen
+var serverTools = await mcpClient.ListToolsAsync();
+var directResources = await mcpClient.ListResourcesAsync();
+
+Log($"[MCP] {serverTools.Count} Tool(s), {directResources.Count} Resource(s).");
+if (serverTools.Count > 0)
+    Log($"[MCP]   Tools: {string.Join(", ", serverTools.Select(t => t.Name))}");
+if (directResources.Count > 0)
+    Log($"[MCP]   Resources: {string.Join(", ", directResources.Select(r => r.Uri))}");
+
 Console.WriteLine("Ziel: Calls ausloesen und dann trace.logs ansehen (HTTP-Level).");
 
 while (true)

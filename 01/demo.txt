@@ -1,8 +1,8 @@
 Demo 01: LLM-first mit Zeit-Tools
 ==================================
-Einstieg | Basis-Demo | Dauer: ~5 Min
+Einstieg | Basis-Demo
 
-LERNZIEL: Das LLM entdeckt MCP-Bausteine (Tools, Resources, Prompts)
+WAS WIR ZEIGEN: Das LLM entdeckt MCP-Bausteine (Tools, Resources, Prompts)
 selbststaendig und ruft sie autonom auf (Function Calls).
 
 VERFUEGBARE MCP-BAUSTEINE:

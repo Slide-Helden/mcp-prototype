@@ -11,7 +11,7 @@ const string TimelineUri = "ops/timeline";
 const string ServiceUriTemplate = "ops/service/{0}";
 const string RunbookUriTemplate = "ops/runbook/{0}";
 
-var url = Environment.GetEnvironmentVariable("MCP_SERVER_URL") ?? "http://localhost:5600/sse";
+var url = Environment.GetEnvironmentVariable("MCP_SERVER_URL") ?? "http://localhost:5000/sse";
 Log($"[MCP] Connecting to {url}...");
 var mcpClient = await McpClient.CreateAsync(
     new HttpClientTransport(new HttpClientTransportOptions
@@ -21,6 +21,20 @@ var mcpClient = await McpClient.CreateAsync(
     }));
 
 Log($"[MCP] Connected to {url} (kein LLM im Spiel).");
+
+// Inventory laden und anzeigen
+var serverTools = await mcpClient.ListToolsAsync();
+var directResources = await mcpClient.ListResourcesAsync();
+var resourceTemplates = await mcpClient.ListResourceTemplatesAsync();
+
+Log($"[MCP] {serverTools.Count} Tool(s), {directResources.Count} Resource(s), {resourceTemplates.Count} Template(s).");
+if (serverTools.Count > 0)
+    Log($"[MCP]   Tools: {string.Join(", ", serverTools.Select(t => t.Name))}");
+if (directResources.Count > 0)
+    Log($"[MCP]   Resources: {string.Join(", ", directResources.Select(r => r.Uri))}");
+if (resourceTemplates.Count > 0)
+    Log($"[MCP]   Templates: {string.Join(", ", resourceTemplates.Select(t => t.UriTemplate))}");
+
 Console.WriteLine("Dieses Client-UI stoesst Tools/Resources manuell an (C# Dev Edition: NuGet, Nullable, Tests).");
 Console.WriteLine();
 

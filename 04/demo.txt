@@ -1,8 +1,8 @@
 Demo 04: Live Communication Trace
 ==================================
-Aufbauend auf Demo 01-03 | +Transparenz | Dauer: ~8 Min
+Aufbauend auf Demo 01-03 | +Transparenz
 
-LERNZIEL: Die MCP-Kommunikation zwischen Client, Server und LLM
+WAS WIR ZEIGEN: Die MCP-Kommunikation zwischen Client, Server und LLM
 wird in Echtzeit sichtbar. Man sieht jeden Request live.
 
 NEU GEGENUEBER DEMO 01-03:
@@ -22,7 +22,7 @@ VORBEREITUNG
 Terminal 1: cd 04/server && dotnet run
 Terminal 2: cd 04/client && dotnet run
 
-Server laeuft auf http://localhost:5200/sse
+Server laeuft auf http://localhost:5000/sse
 Live-Trace ist standardmaessig AKTIV.
 
 FARBEN IM LIVE-TRACE

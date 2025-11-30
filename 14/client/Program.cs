@@ -6,7 +6,7 @@ using ModelContextProtocol.Client;
 using System.Text;
 using System.Text.Json;
 
-var url = Environment.GetEnvironmentVariable("MCP_SERVER_URL") ?? "http://localhost:5800/sse";
+var url = Environment.GetEnvironmentVariable("MCP_SERVER_URL") ?? "http://localhost:5000/sse";
 Log($"[MCP] Connecting to {url}...");
 var mcpClient = await McpClient.CreateAsync(
     new HttpClientTransport(new HttpClientTransportOptions
@@ -16,6 +16,17 @@ var mcpClient = await McpClient.CreateAsync(
     }));
 
 Log($"[MCP] Connected to {url}");
+
+// Inventory laden und anzeigen
+var directResources = await mcpClient.ListResourcesAsync();
+var resourceTemplates = await mcpClient.ListResourceTemplatesAsync();
+
+Log($"[MCP] {directResources.Count} Resource(s), {resourceTemplates.Count} Template(s).");
+if (directResources.Count > 0)
+    Log($"[MCP]   Resources: {string.Join(", ", directResources.Select(r => r.Uri))}");
+if (resourceTemplates.Count > 0)
+    Log($"[MCP]   Templates: {string.Join(", ", resourceTemplates.Select(t => t.UriTemplate))}");
+
 Console.WriteLine("Dieser Client liest nur Testplaene (Server 1). Ausfuehrung liegt auf Server 2.");
 
 while (true)

@@ -71,6 +71,14 @@ var directResources = await mcpClient.ListResourcesAsync();
 var resourceTemplates = await mcpClient.ListResourceTemplatesAsync();
 
 Log($"[MCP] Server liefert {serverTools.Count} Tool(s), {serverPrompts.Count} Prompt(s) und {directResources.Count} Resource(s) (+ {resourceTemplates.Count} Template(s)).");
+if (serverTools.Count > 0)
+    Log($"[MCP]   Tools: {string.Join(", ", serverTools.Select(t => t.Name))}");
+if (serverPrompts.Count > 0)
+    Log($"[MCP]   Prompts: {string.Join(", ", serverPrompts.Select(p => p.Name))}");
+if (directResources.Count > 0)
+    Log($"[MCP]   Resources: {string.Join(", ", directResources.Select(r => r.Uri))}");
+if (resourceTemplates.Count > 0)
+    Log($"[MCP]   Templates: {string.Join(", ", resourceTemplates.Select(t => t.UriTemplate))}");
 Console.WriteLine("      Nutze :prompts, :resources, :prompt <name> oder :read <uri> für einen schnellen Einstieg.");
 Console.WriteLine();
 

@@ -48,7 +48,7 @@ Console.WriteLine();
 
 // ---------- 2) MCP-Client zum Dokumenten-Server ----------
 
-var url = "http://localhost:5100/sse";
+var url = "http://localhost:5000/sse";
 Log($"[MCP] Connecting to {url}...");
 var mcpClient = await McpClient.CreateAsync(
     new HttpClientTransport(new HttpClientTransportOptions
@@ -68,6 +68,14 @@ var directResources = await mcpClient.ListResourcesAsync();
 var resourceTemplates = await mcpClient.ListResourceTemplatesAsync();
 
 Log($"[MCP] {serverTools.Count} Tool(s), {serverPrompts.Count} Prompt(s), {directResources.Count} Resource(s), {resourceTemplates.Count} Template(s).");
+if (serverTools.Count > 0)
+    Log($"[MCP]   Tools: {string.Join(", ", serverTools.Select(t => t.Name))}");
+if (serverPrompts.Count > 0)
+    Log($"[MCP]   Prompts: {string.Join(", ", serverPrompts.Select(p => p.Name))}");
+if (directResources.Count > 0)
+    Log($"[MCP]   Resources: {string.Join(", ", directResources.Select(r => r.Uri))}");
+if (resourceTemplates.Count > 0)
+    Log($"[MCP]   Templates: {string.Join(", ", resourceTemplates.Select(t => t.UriTemplate))}");
 Console.WriteLine("      Commands: :tools, :prompts, :resources, :prompt <name>, :read <uri>");
 Console.WriteLine();
 

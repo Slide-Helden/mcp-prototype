@@ -1,8 +1,8 @@
 Demo 12: MCP ohne KI
 ====================
-Sonderfall | MCP als Standard-Connector | Dauer: ~5 Min
+Sonderfall | MCP als Standard-Connector
 
-LERNZIEL: MCP funktioniert auch komplett ohne LLM.
+WAS WIR ZEIGEN: MCP funktioniert auch komplett ohne LLM.
 Das Protokoll ist ein reiner Connector-Standard.
 
 KERNAUSSAGE:
@@ -22,7 +22,7 @@ VORBEREITUNG
 Terminal 1: cd 12/server && dotnet run
 Terminal 2: cd 12/client && dotnet run
 
-Server laeuft auf http://localhost:5600/sse
+Server laeuft auf http://localhost:5000/sse
 KEIN LLM NOETIG. Kein API-Key erforderlich.
 
 SCHRITT-FUER-SCHRITT (MENUE-BASIERT)

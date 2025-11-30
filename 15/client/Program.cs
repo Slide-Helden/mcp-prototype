@@ -6,9 +6,9 @@ using ModelContextProtocol.Client;
 using System.Text;
 using System.Text.Json;
 
-var ghUrl = Environment.GetEnvironmentVariable("MCP_GITHUB_SERVER_URL") ?? "http://localhost:5900/sse";
-var planUrl = Environment.GetEnvironmentVariable("MCP_PLAN_SERVER_URL") ?? "http://localhost:5800/sse";
-var execUrl = Environment.GetEnvironmentVariable("MCP_EXEC_SERVER_URL") ?? "http://localhost:5850/sse";
+var ghUrl = Environment.GetEnvironmentVariable("MCP_GITHUB_SERVER_URL") ?? "http://localhost:5002/sse";
+var planUrl = Environment.GetEnvironmentVariable("MCP_PLAN_SERVER_URL") ?? "http://localhost:5000/sse";
+var execUrl = Environment.GetEnvironmentVariable("MCP_EXEC_SERVER_URL") ?? "http://localhost:5001/sse";
 
 Log($"[MCP] Connecting to GitHub-Server: {ghUrl}...");
 var ghClient = await McpClient.CreateAsync(
@@ -19,6 +19,12 @@ var ghClient = await McpClient.CreateAsync(
     }));
 Log("[MCP] GitHub-Server connected.");
 
+// GitHub-Server Inventory
+var ghTools = await ghClient.ListToolsAsync();
+Log($"[MCP] GitHub: {ghTools.Count} Tool(s).");
+if (ghTools.Count > 0)
+    Log($"[MCP]   Tools: {string.Join(", ", ghTools.Select(t => t.Name))}");
+
 Log($"[MCP] Connecting to Plan-Server: {planUrl}...");
 var planClient = await McpClient.CreateAsync(
     new HttpClientTransport(new HttpClientTransportOptions
@@ -28,6 +34,15 @@ var planClient = await McpClient.CreateAsync(
     }));
 Log("[MCP] Plan-Server connected.");
 
+// Plan-Server Inventory
+var planResources = await planClient.ListResourcesAsync();
+var planTemplates = await planClient.ListResourceTemplatesAsync();
+Log($"[MCP] Plan: {planResources.Count} Resource(s), {planTemplates.Count} Template(s).");
+if (planResources.Count > 0)
+    Log($"[MCP]   Resources: {string.Join(", ", planResources.Select(r => r.Uri))}");
+if (planTemplates.Count > 0)
+    Log($"[MCP]   Templates: {string.Join(", ", planTemplates.Select(t => t.UriTemplate))}");
+
 Log($"[MCP] Connecting to Executor-Server: {execUrl}...");
 var execClient = await McpClient.CreateAsync(
     new HttpClientTransport(new HttpClientTransportOptions
@@ -36,6 +51,12 @@ var execClient = await McpClient.CreateAsync(
         Endpoint = new Uri(execUrl)
     }));
 Log("[MCP] Executor-Server connected.");
+
+// Executor-Server Inventory
+var execTools = await execClient.ListToolsAsync();
+Log($"[MCP] Executor: {execTools.Count} Tool(s).");
+if (execTools.Count > 0)
+    Log($"[MCP]   Tools: {string.Join(", ", execTools.Select(t => t.Name))}");
 
 Log($"[MCP] All 3 servers connected:");
 Console.WriteLine("Ablauf: Bugs lesen (GitHub) -> Plan nachschlagen (Server 1) -> optional tests.run (Server 2).");
