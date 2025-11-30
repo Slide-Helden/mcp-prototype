@@ -86,66 +86,66 @@ jobs:
       run: dotnet publish --no-restore
       working-directory: ./04/server/
 
-    - name: Restore dependencies ops client (demo 12)
+    - name: Restore dependencies ops client (demo 05)
       run: dotnet restore
-      working-directory: ./12/client/
+      working-directory: ./05/client/
 
-    - name: Build ops client (demo 12)
+    - name: Build ops client (demo 05)
       run: dotnet publish --no-restore
-      working-directory: ./12/client/
+      working-directory: ./05/client/
 
-    - name: Restore dependencies ops server (demo 12)
+    - name: Restore dependencies ops server (demo 05)
       run: dotnet restore
-      working-directory: ./12/server/
+      working-directory: ./05/server/
 
-    - name: Build ops server (demo 12)
+    - name: Build ops server (demo 05)
       run: dotnet publish --no-restore
-      working-directory: ./12/server/
+      working-directory: ./05/server/
 
-    - name: Restore dependencies trace client (demo 13)
+    - name: Restore dependencies trace client (demo 06)
       run: dotnet restore
-      working-directory: ./13/client/
+      working-directory: ./06/client/
 
-    - name: Build trace client (demo 13)
+    - name: Build trace client (demo 06)
       run: dotnet publish --no-restore
-      working-directory: ./13/client/
+      working-directory: ./06/client/
 
-    - name: Restore dependencies trace server (demo 13)
+    - name: Restore dependencies trace server (demo 06)
       run: dotnet restore
-      working-directory: ./13/server/
+      working-directory: ./06/server/
 
-    - name: Build trace server (demo 13)
+    - name: Build trace server (demo 06)
       run: dotnet publish --no-restore
-      working-directory: ./13/server/
+      working-directory: ./06/server/
 
-    - name: Restore dependencies testplan client (demo 14)
+    - name: Restore dependencies testplan client (demo 07)
       run: dotnet restore
-      working-directory: ./14/client/
+      working-directory: ./07/client/
 
-    - name: Build testplan client (demo 14)
+    - name: Build testplan client (demo 07)
       run: dotnet publish --no-restore
-      working-directory: ./14/client/
+      working-directory: ./07/client/
 
-    - name: Restore dependencies testplan server (demo 14)
+    - name: Restore dependencies testplan server (demo 07)
       run: dotnet restore
-      working-directory: ./14/server/
+      working-directory: ./07/server/
 
-    - name: Build testplan server (demo 14)
+    - name: Build testplan server (demo 07)
       run: dotnet publish --no-restore
-      working-directory: ./14/server/
+      working-directory: ./07/server/
 
-    - name: Restore dependencies plan-exec orchestrator client (demo 15)
+    - name: Restore dependencies plan-exec orchestrator client (demo 08)
       run: dotnet restore
-      working-directory: ./15/client/
+      working-directory: ./08/client/
 
-    - name: Build plan-exec orchestrator client (demo 15)
+    - name: Build plan-exec orchestrator client (demo 08)
       run: dotnet publish --no-restore
-      working-directory: ./15/client/
+      working-directory: ./08/client/
 
-    - name: Restore dependencies plan executor server (demo 15)
+    - name: Restore dependencies plan executor server (demo 08)
       run: dotnet restore
-      working-directory: ./15/server/
+      working-directory: ./08/server/
 
-    - name: Build plan executor server (demo 15)
+    - name: Build plan executor server (demo 08)
       run: dotnet publish --no-restore
-      working-directory: ./15/server/
+      working-directory: ./08/server/
