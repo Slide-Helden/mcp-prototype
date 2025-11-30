@@ -1,62 +1,93 @@
-Demo 07: Testplan-Katalog (nur lesen)
+Demo 08: Multi-Server-Orchestrierung
 =====================================
-Spezialisiert | Nur Resources
+Fortgeschritten | Drei Server
 
-WAS WIR ZEIGEN: MCP-Server kann auch rein als Daten-Provider dienen.
-Hier: Testplaene als Resources ohne ausfuehrbare Tools.
+WAS WIR ZEIGEN: Ein Client kann mehrere MCP-Server gleichzeitig nutzen.
+Hier: GitHub (Issues) + Katalog (Plaene) + Executor (Ausfuehrung)
 
-DESIGN-ENTSCHEIDUNG:
-Server 07 = Katalog (nur lesen)
-Server 08 = Executor (ausfuehren)
--> Trennung von Concerns
+ARCHITEKTUR:
+┌────────────┐     ┌─────────────────┐
+│  CLIENT    │────►│  GitHub-Server  │  (Issues suchen)
+│            │     └─────────────────┘
+│            │     ┌─────────────────┐
+│            │────►│  Plan-Server    │  (Plaene lesen) = Server 07
+│            │     └─────────────────┘
+│            │     ┌─────────────────┐
+│            │────►│  Exec-Server    │  (Plaene ausfuehren) = Server 08
+└────────────┘     └─────────────────┘
 
 VERFUEGBARE MCP-BAUSTEINE:
-- Tools: (keine - nur Resources!)
-- Resources: tests/catalog, tests/plan/{slug}
-- Plaene: google-news
+- GitHub-Server (5002): issues.search (oder aehnlich) - optional
+- Plan-Server (5000): Resources tests/catalog, tests/plan/{slug}
+- Executor-Server (5001): Tools tests.list, tests.run
 
-VORBEREITUNG
-------------
-Terminal 1: cd 07/server && dotnet run
-Terminal 2: cd 07/client && dotnet run
+VORBEREITUNG (DREI TERMINALS + CLIENT)
+--------------------------------------
+Terminal 1: cd 07/server && dotnet run  (Port 5000 - Plan-Server)
+Terminal 2: cd 08/server && dotnet run  (Port 5001 - Executor)
+Terminal 3: GitHub-MCP-Server starten   (Port 5002, optional)
+Terminal 4: cd 08/client && dotnet run
 
-Server laeuft auf http://localhost:5000/sse
 KEIN LLM NOETIG.
+Hinweis: GitHub-Server ist optional, Demo funktioniert auch ohne.
 
 SCHRITT-FUER-SCHRITT (MENUE-BASIERT)
 ------------------------------------
 
-1. KATALOG LESEN
-   Taste: 1 (Plaene listen)
+1. BUGS SUCHEN (GitHub-Server)
+   Taste: 1 (Bugs suchen)
 
-   -> Zeige: Resource tests/catalog
-   -> Erklaere: Markdown-Liste aller verfuegbaren Testplaene
+   -> Zeige: Client ruft GitHub-Server auf
+   -> Erklaere: Erster MCP-Server im Verbund
 
-2. EINZELNEN PLAN LESEN
-   Taste: 2 (Plan lesen)
+2. PLAENE LISTEN (Plan-Server 07)
+   Taste: 3 (Plaene listen)
+
+   -> Zeige: Client ruft Plan-Server auf
+   -> Erklaere: Zweiter MCP-Server, gleicher Client
+
+3. PLAN LESEN
+   Taste: 4 (Plan lesen)
    Eingabe: google-news
 
-   -> Zeige: Resource tests/plan/google-news
-   -> Erklaere: Plan beschreibt Schritte, fuehrt sie NICHT aus
+   -> Zeige: Resource tests/plan/google-news von Server 07
+   -> Erklaere: Plan ist nur Beschreibung
 
-3. PLAN-INHALT VERSTEHEN
-   Der Plan "google-news" enthaelt:
-   - resolve-target: Ziel-URL bestimmen
-   - http-get: GET senden
-   - status-check: 2xx/3xx pruefen
-   - content-fetch: Body lesen
-   - content-check: Schlagwort suchen
+4. PLAN AUSFUEHREN (Exec-Server 08)
+   Taste: 5 (Plan ausfuehren)
 
-   -> Erklaere: Das ist eine BESCHREIBUNG, keine Ausfuehrung
+   -> Zeige: Tool tests.run auf Executor-Server
+   -> Erklaere: Dritter Server fuehrt tatsaechlich aus!
+   -> Zeige: Ergebnis der HTTP-Requests
+
+5. EXECUTOR-TOOLS ANZEIGEN
+   Taste: 6 (Executor-Tools listen)
+
+   -> Zeige: tools/list auf Executor-Server
+   -> Erklaere: Jeder Server hat eigene Tools
+
+FLOW ZUSAMMENFASSUNG
+--------------------
+1. GitHub: Bug-ID finden (z.B. "test-google-news fehlgeschlagen")
+2. Katalog: Passenden Testplan nachschlagen
+3. Executor: Plan ausfuehren, Ergebnis pruefen
 
 KERNAUSSAGE
 -----------
-"Dieser Server liefert nur Daten - keine Aktionen.
- Die Ausfuehrung passiert auf einem anderen Server.
- Das ist Separation of Concerns mit MCP."
+"Ein Client, mehrere Server.
+ Jeder Server hat seine Verantwortung.
+ Das ist die Skalierung mit MCP."
 
-UEBERLEITUNG ZU DEMO 08
------------------------
-"Jetzt haben wir den Plan.
- Wie fuehren wir ihn aus?
- Demo 08 zeigt Multi-Server-Orchestrierung."
+GESAMTUEBERSICHT ALLER DEMOS
+----------------------------
+Demo 01: LLM-first Einstieg
+Demo 02: LLM-first + Dokumente
+Demo 03: Orchestrator-first (Kontrast)
+Demo 04: Live-Trace (Transparenz)
+Demo 05: MCP ohne KI
+Demo 06: Protokoll-Details
+Demo 07: Server als reiner Katalog
+Demo 08: Multi-Server (dieser Abschluss)
+
+"Von 'Hello World' bis Enterprise-Architektur -
+ MCP skaliert mit den Anforderungen."

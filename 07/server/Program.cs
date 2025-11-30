@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.HttpLogging;
-using TestPlanServer;
+using TestPlanExecutor;
 
 static void Log(string message) => Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {message}");
 
 var builder = WebApplication.CreateBuilder(args);
 
-var url = Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:5000";
+var url = Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:5001";
 builder.WebHost.UseUrls(url);
 Log($"[Server] Configuring on {url}...");
 
@@ -18,10 +18,16 @@ builder.Logging.AddSimpleConsole(options =>
 });
 builder.Logging.SetMinimumLevel(LogLevel.Information);
 
+builder.Services.AddHttpClient<TestPlanRunner>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(20);
+});
+builder.Services.AddSingleton<TestPlanRunner>();
+
 builder.Services
     .AddMcpServer()
     .WithHttpTransport()
-    .WithResourcesFromAssembly();
+    .WithToolsFromAssembly();
 
 builder.Services.AddHttpLogging(o =>
 {
@@ -42,10 +48,10 @@ app.MapGet("/health", () => Results.Ok(new
     status = "ok",
     plans = new[] { "google-news" },
     sse = "/sse",
-    catalog = "tests/catalog"
+    note = "Dies ist der Ausfuehrungs-Server fuer Testplaene."
 }));
 
-Log($"[Server] Demo 07 - Testplan-Katalog-Server gestartet");
+Log($"[Server] Demo 08 - Testplan-Executor-Server gestartet");
 Log($"[Server] MCP SSE Endpunkt: {url}/sse");
 Log($"[Server] Health Check: {url}/health");
 
