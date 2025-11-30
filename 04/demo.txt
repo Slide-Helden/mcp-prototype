@@ -1,0 +1,40 @@
+Rezept-Demo (04) - Ablauf
+=========================
+
+Vorbereitung:
+- Server (DocServer) starten, danach Client (`dotnet run` in DocHostApp).
+
+Befehlsabfolge im Client-REPL:
+
+1. System-Check
+   ----------------
+   1. :tools
+   2. :resources
+   3. Freier Prompt: "Hallo! Wer bist du und wie kannst du mir beim Kochen helfen?"
+      (Prüft, ob die "Koch-Persona" (System Prompt) korrekt geladen ist.)
+
+2. Die Katalog-Methode
+   --------------------------------------
+   4. :read docs/catalog
+   5. Freier Prompt: "Ich möchte Nudeln essen. Schau in deinen Katalog und sag mir, welche Rezepte dazu passen."
+
+3. Detail-Abruf & Anleitung
+   ------------------------
+   6. Freier Prompt: "Das klingt gut. Wie mache ich die Gnocchi? Lies das Rezept und leite mich an."
+   7. :read docs/document/recipe_gnocchi_pesto_genovese
+
+4. Der "Kühlschrank-Test" (Inferenz)
+   ---------------------------------
+   8. Freier Prompt: "Ich habe noch Sahne und Eier übrig. Welches Rezept aus deiner Liste könnte ich damit kochen?"
+
+5. Vergleich & Analyse (Multi-File)
+   --------------------------------
+   9. Freier Prompt: "Ich schwanke zwischen den Gnocchi und der Tomatensuppe. Welches Gericht hat weniger Zutaten?"
+
+6. Kontext & Gedächtnis
+   --------------------
+   10. Freier Prompt: "Erstelle mir eine Einkaufsliste für die Gnocchi, aber rechne die Mengen für die doppelte Personenanzahl hoch."
+
+7. Negative Tests (Halluzination vermeiden)
+   ----------------------------------------
+   11. Freier Prompt: "Wie mache ich Sushi?"
