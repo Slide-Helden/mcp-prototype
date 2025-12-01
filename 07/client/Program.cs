@@ -1,243 +1,250 @@
-// TestPlanOrchestrator - verbindet GitHub-Issue-Server + Plan-Server + Ausfuehrungs-Server
+// Demo 07: Multi-Server LLM-first Orchestrierung
+// Ein Aufruf -> LLM nutzt automatisch beide MCP-Server (Plan + Executor)
 
 using Microsoft.Extensions.AI;
+using Microsoft.Extensions.Logging;
 using ModelContextProtocol;
 using ModelContextProtocol.Client;
+using OpenAI;
+using OpenAI.Chat;
+using System.ClientModel;
 using System.Text;
 using System.Text.Json;
 
-var ghUrl = Environment.GetEnvironmentVariable("MCP_GITHUB_SERVER_URL") ?? "http://localhost:5002/sse";
+using AIChatMessage = Microsoft.Extensions.AI.ChatMessage;
+using AIChatRole = Microsoft.Extensions.AI.ChatRole;
+using AIFunction = Microsoft.Extensions.AI.AIFunction;
+
+// ---------- SDK-Logging konfigurieren ----------
+var logLevel = LogLevel.Debug; // hier Loglevel aendern (Trace fuer JSON-RPC Details)
+
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddSimpleConsole(options =>
+    {
+        options.TimestampFormat = "[HH:mm:ss.fff] ";
+        options.SingleLine = true;
+        options.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Enabled;
+    });
+    builder.SetMinimumLevel(logLevel);
+    builder.AddFilter("ModelContextProtocol", logLevel);
+});
+
+var logger = loggerFactory.CreateLogger("Demo07");
+
+// ---------- 1) LLM Chat-Client (GitHub Models / OpenAI-kompatibel) ----------
+
+var endpoint = Environment.GetEnvironmentVariable("OLLAMA_OPENAI_ENDPOINT") ?? "http://localhost:11434/v1";
+var modelId = Environment.GetEnvironmentVariable("OLLAMA_MODEL") ?? "gpt-oss:20b";
+var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY") ?? "ollama";
+
+IChatClient chat =
+    new ChatClientBuilder(
+        new ChatClient(
+            model: modelId,
+            credential: new ApiKeyCredential(apiKey),
+            options: new OpenAIClientOptions { Endpoint = new Uri(endpoint) }
+        ).AsIChatClient()
+    )
+    .UseFunctionInvocation()
+    .Build();
+
+PrintBanner();
+Log($"[LLM] Using model: {modelId} @ {endpoint}");
+Console.WriteLine();
+
+// ---------- 2) MCP-Clients: Plan-Server + Exec-Server ----------
+
 var planUrl = Environment.GetEnvironmentVariable("MCP_PLAN_SERVER_URL") ?? "http://localhost:5000/sse";
 var execUrl = Environment.GetEnvironmentVariable("MCP_EXEC_SERVER_URL") ?? "http://localhost:5001/sse";
 
-Log($"[MCP] Connecting to GitHub-Server: {ghUrl}...");
-var ghClient = await McpClient.CreateAsync(
-    new HttpClientTransport(new HttpClientTransportOptions
-    {
-        Name = "GitHub Server",
-        Endpoint = new Uri(ghUrl)
-    }));
-Log("[MCP] GitHub-Server connected.");
-
-// GitHub-Server Inventory
-var ghTools = await ghClient.ListToolsAsync();
-Log($"[MCP] GitHub: {ghTools.Count} Tool(s).");
-if (ghTools.Count > 0)
-    Log($"[MCP]   Tools: {string.Join(", ", ghTools.Select(t => t.Name))}");
-
-Log($"[MCP] Connecting to Plan-Server: {planUrl}...");
+// Plan-Server verbinden
+logger.LogInformation("Verbinde zu Plan-Server: {Url}", planUrl);
 var planClient = await McpClient.CreateAsync(
-    new HttpClientTransport(new HttpClientTransportOptions
-    {
-        Name = "Plan Server",
-        Endpoint = new Uri(planUrl)
-    }));
-Log("[MCP] Plan-Server connected.");
+    new HttpClientTransport(
+        new HttpClientTransportOptions { Name = "Plan Server", Endpoint = new Uri(planUrl) },
+        loggerFactory
+    ),
+    new McpClientOptions { ClientInfo = new() { Name = "Demo07-Client", Version = "1.0.0" } },
+    loggerFactory
+);
 
-// Plan-Server Inventory
-var planResources = await planClient.ListResourcesAsync();
-var planTemplates = await planClient.ListResourceTemplatesAsync();
-Log($"[MCP] Plan: {planResources.Count} Resource(s), {planTemplates.Count} Template(s).");
-if (planResources.Count > 0)
-    Log($"[MCP]   Resources: {string.Join(", ", planResources.Select(r => r.Uri))}");
-if (planTemplates.Count > 0)
-    Log($"[MCP]   Templates: {string.Join(", ", planTemplates.Select(t => t.UriTemplate))}");
-
-Log($"[MCP] Connecting to Executor-Server: {execUrl}...");
+// Exec-Server verbinden
+logger.LogInformation("Verbinde zu Exec-Server: {Url}", execUrl);
 var execClient = await McpClient.CreateAsync(
-    new HttpClientTransport(new HttpClientTransportOptions
-    {
-        Name = "Executor Server",
-        Endpoint = new Uri(execUrl)
-    }));
-Log("[MCP] Executor-Server connected.");
+    new HttpClientTransport(
+        new HttpClientTransportOptions { Name = "Exec Server", Endpoint = new Uri(execUrl) },
+        loggerFactory
+    ),
+    new McpClientOptions { ClientInfo = new() { Name = "Demo07-Client", Version = "1.0.0" } },
+    loggerFactory
+);
 
-// Executor-Server Inventory
+// Inventory ausgeben
+var planResources = await planClient.ListResourcesAsync();
 var execTools = await execClient.ListToolsAsync();
-Log($"[MCP] Executor: {execTools.Count} Tool(s).");
-if (execTools.Count > 0)
-    Log($"[MCP]   Tools: {string.Join(", ", execTools.Select(t => t.Name))}");
 
-Log($"[MCP] All 3 servers connected:");
-Console.WriteLine("Ablauf: Bugs lesen (GitHub) -> Plan nachschlagen (Server 1) -> optional tests.run (Server 2).");
+Console.WriteLine();
+Log($"[MCP] Plan-Server: {planResources.Count} Resource(s)");
+Log($"[MCP] Exec-Server: {execTools.Count} Tool(s)");
+Console.WriteLine();
+
+// ---------- 3) LLM-Tools: Wrapper fuer beide MCP-Server ----------
+
+// Plan-Server Tools (Resources als Tools exponieren)
+var listPlansTool = AIFunctionFactory.Create(
+    method: async () =>
+    {
+        logger.LogDebug("Tool plans.list aufgerufen -> Plan-Server");
+        var res = await planClient.ReadResourceAsync("tests/catalog");
+        return string.Join("\n", res.Contents.ToAIContents().OfType<TextContent>().Select(t => t.Text));
+    },
+    name: "plans.list",
+    description: "Listet alle verfuegbaren Testplaene vom Plan-Server."
+);
+
+var readPlanTool = AIFunctionFactory.Create(
+    method: async (string planName) =>
+    {
+        logger.LogDebug("Tool plans.read aufgerufen -> Plan-Server (plan={Plan})", planName);
+        var res = await planClient.ReadResourceAsync($"tests/plan/{planName}");
+        return string.Join("\n", res.Contents.ToAIContents().OfType<TextContent>().Select(t => t.Text));
+    },
+    name: "plans.read",
+    description: "Liest einen spezifischen Testplan vom Plan-Server. Parameter: planName - der Kurzname aus dem Katalog (z.B. 'google-news', NICHT 'google-news-plan')"
+);
+
+// Exec-Server Tools (Server-Tools direkt weiterleiten)
+var listExecToolsTool = AIFunctionFactory.Create(
+    method: async () =>
+    {
+        logger.LogDebug("Tool exec.tools aufgerufen -> Exec-Server");
+        var tools = await execClient.ListToolsAsync();
+        return tools.Select(t => new { t.Name, t.Description }).ToArray();
+    },
+    name: "exec.tools",
+    description: "Listet verfuegbare Ausfuehrungs-Tools vom Exec-Server."
+);
+
+var runTestTool = AIFunctionFactory.Create(
+    method: async (string planName) =>
+    {
+        logger.LogDebug("Tool exec.run aufgerufen -> Exec-Server (plan={Plan})", planName);
+        var result = await execClient.CallToolAsync("tests.run", new Dictionary<string, object?> { ["plan"] = planName });
+        return string.Join("\n", result.Content.ToAIContents().OfType<TextContent>().Select(t => t.Text));
+    },
+    name: "exec.run",
+    description: "Fuehrt einen Testplan auf dem Exec-Server aus. Parameter: planName - der Kurzname (z.B. 'google-news', NICHT 'google-news-plan')"
+);
+
+// Tool-Bag fuer LLM
+var toolBag = new List<AIFunction> { listPlansTool, readPlanTool, listExecToolsTool, runTestTool };
+
+// ---------- 4) System-Prompt: LLM orchestriert beide Server ----------
+
+var systemPrompt = @"Du bist ein Test-Orchestrator mit Zugriff auf ZWEI MCP-Server:
+
+1. PLAN-SERVER (Port 5000) - Testplan-Katalog:
+   - plans.list: Zeigt alle verfuegbaren Testplaene
+   - plans.read(planName): Liest Details eines Plans
+
+2. EXEC-SERVER (Port 5001) - Testplan-Ausfuehrung:
+   - exec.tools: Zeigt verfuegbare Ausfuehrungs-Tools
+   - exec.run(planName): Fuehrt einen Testplan aus
+
+WICHTIGER WORKFLOW bei Anfragen wie 'Fuehre den google-news Test aus':
+1. Erst plans.list aufrufen um verfuegbare Plaene zu sehen
+2. Dann plans.read('google-news') um den Plan zu verstehen
+3. Dann exec.run('google-news') um den Test auszufuehren
+4. Ergebnis zusammenfassen
+
+Du demonstrierst Multi-Server-Orchestrierung: Ein Client, zwei spezialisierte Server.
+Erklaere kurz welchen Server du gerade ansprichst.";
+
+var history = new List<AIChatMessage> { new(AIChatRole.System, systemPrompt) };
+
+// ---------- 5) REPL ----------
+
+PrintHelp();
 
 while (true)
 {
-    PrintMenu();
-    Console.Write("> ");
-    var choice = Console.ReadLine();
+    Console.Write("\n> ");
+    var line = Console.ReadLine();
+    if (string.IsNullOrWhiteSpace(line)) continue;
 
-    switch (choice)
+    if (line.Equals(":exit", StringComparison.OrdinalIgnoreCase)) break;
+    if (line.Equals(":help", StringComparison.OrdinalIgnoreCase)) { PrintHelp(); continue; }
+
+    if (line.Equals(":plans", StringComparison.OrdinalIgnoreCase))
     {
-        case "1":
-            await SearchBugsAndShowPlans(ghClient, planClient);
-            break;
-        case "2":
-            await ListGitHubTools(ghClient);
-            break;
-        case "3":
-            await ShowCatalog(planClient);
-            break;
-        case "4":
-            await ReadPlan(planClient);
-            break;
-        case "5":
-            await RunPlan(execClient);
-            break;
-        case "6":
-            await ListExecutorTools(execClient);
-            break;
-        case "7":
-            return;
-        default:
-            Console.WriteLine("Unknown choice.");
-            break;
-    }
-}
-
-static async Task SearchBugsAndShowPlans(McpClient ghClient, McpClient planClient)
-{
-    Console.Write("GitHub-Suchstring (z. B. repo:owner/repo is:issue is:open label:bug): ");
-    var query = (Console.ReadLine() ?? "is:issue is:open label:bug").Trim();
-
-    var toolName = await PickIssueSearchToolAsync(ghClient);
-    if (toolName is null)
-    {
-        Console.WriteLine("Kein Issues-Search-Tool auf GitHub-Server gefunden.");
-        return;
+        var res = await planClient.ReadResourceAsync("tests/catalog");
+        Console.WriteLine("\n=== Testplaene (Plan-Server) ===");
+        Console.WriteLine(string.Join("\n", res.Contents.ToAIContents().OfType<TextContent>().Select(t => t.Text)));
+        continue;
     }
 
-    Console.WriteLine($"Nutze Tool {toolName} auf GitHub-Server...");
-    var args = BuildIssueSearchArgs(query);
-
-    try
+    if (line.Equals(":tools", StringComparison.OrdinalIgnoreCase))
     {
-        var result = await ghClient.CallToolAsync(toolName, args);
-        PrintContent(result.Content.ToAIContents(), $"Bugs (Tool {toolName})");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"GitHub-Call fehlgeschlagen: {ex.Message}");
-        return;
+        var tools = await execClient.ListToolsAsync();
+        Console.WriteLine("\n=== Tools (Exec-Server) ===");
+        foreach (var t in tools) Console.WriteLine($"  - {t.Name}: {t.Description}");
+        continue;
     }
 
-    var catalog = await planClient.ReadResourceAsync("tests/catalog");
-    PrintContent(catalog.Contents.ToAIContents(), "Testplan-Katalog (Server 1)");
-}
+    // LLM-first: Freier Chat - LLM entscheidet welche Server/Tools es nutzt
+    history.Add(new(AIChatRole.User, line));
+    logger.LogInformation("LLM-Request: {MessageCount} Messages, {ToolCount} Tools", history.Count, toolBag.Count);
 
-static async Task ShowCatalog(McpClient planClient)
-{
-    var res = await planClient.ReadResourceAsync("tests/catalog");
-    PrintContent(res.Contents.ToAIContents(), "Plan-Katalog (Server 1)");
-}
-
-static async Task ReadPlan(McpClient planClient)
-{
-    Console.Write("Plan-Slug (z. B. google-news): ");
-    var slug = (Console.ReadLine() ?? "google-news").Trim();
-    var res = await planClient.ReadResourceAsync($"tests/plan/{slug}");
-    PrintContent(res.Contents.ToAIContents(), $"Plan {slug} (Server 1)");
-}
-
-static async Task RunPlan(McpClient execClient)
-{
-    Console.Write("Plan-Name fuer Ausfuehrung (z. B. google-news): ");
-    var plan = (Console.ReadLine() ?? "google-news").Trim();
-    Console.WriteLine($"Fuehre tests.run auf Executor fuer {plan} aus...");
-    var result = await execClient.CallToolAsync("tests.run", new Dictionary<string, object?>
+    var updates = new List<ChatResponseUpdate>();
+    await foreach (var update in chat.GetStreamingResponseAsync(
+        history.AsEnumerable(),
+        new ChatOptions { Tools = [.. toolBag], AllowMultipleToolCalls = true }))
     {
-        ["plan"] = plan
-    });
-
-    PrintContent(result.Content.ToAIContents(), $"Testergebnis {plan} (Server 2)");
-}
-
-static async Task ListExecutorTools(McpClient execClient)
-{
-    var tools = await execClient.ListToolsAsync();
-    Console.WriteLine("Executor-Tools (Server 2):");
-    foreach (var t in tools)
-    {
-        Console.WriteLine($"- {t.Name} : {t.Description}");
+        Console.Write(update);
+        updates.Add(update);
     }
-}
-
-static void PrintMenu()
-{
     Console.WriteLine();
-    Console.WriteLine("Multi-Server Testplan Orchestrator");
-    Console.WriteLine(" 1) Bugs suchen (GitHub-Server) + Plan-Katalog zeigen");
-    Console.WriteLine(" 2) GitHub-Tools listen");
-    Console.WriteLine(" 3) Plaene listen (Plan-Server Resource)");
-    Console.WriteLine(" 4) Plan lesen (Plan-Server Resource)");
-    Console.WriteLine(" 5) Plan ausfuehren (Executor tests.run)");
-    Console.WriteLine(" 6) Executor-Tools listen");
-    Console.WriteLine(" 7) Exit");
+
+    history.AddMessages(updates);
 }
 
-static void PrintContent(IEnumerable<AIContent> content, string headline)
+// ---------- Hilfsfunktionen ----------
+
+static void Log(string message) => Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {message}");
+
+static void PrintBanner()
 {
-    var text = ExtractText(content);
-    Console.WriteLine($"\n--- {headline} ---");
-    Console.WriteLine(string.IsNullOrWhiteSpace(text) ? "(leer)" : text);
+    Console.WriteLine("╔════════════════════════════════════════════════════════════════════════════════╗");
+    Console.WriteLine("║      Demo 07: Multi-Server LLM-first Orchestrierung                           ║");
+    Console.WriteLine("╠════════════════════════════════════════════════════════════════════════════════╣");
+    Console.WriteLine("║                                                                                 ║");
+    Console.WriteLine("║  Ein Aufruf -> LLM orchestriert automatisch ZWEI MCP-Server:                   ║");
+    Console.WriteLine("║                                                                                 ║");
+    Console.WriteLine("║              ┌─────────────────┐                                                ║");
+    Console.WriteLine("║         ┌───►│  Plan-Server    │  (Resources: Testplan-Katalog)                ║");
+    Console.WriteLine("║         │    └─────────────────┘                                                ║");
+    Console.WriteLine("║    ┌────┴────┐                                                                  ║");
+    Console.WriteLine("║    │   LLM   │  entscheidet automatisch                                         ║");
+    Console.WriteLine("║    └────┬────┘                                                                  ║");
+    Console.WriteLine("║         │    ┌─────────────────┐                                                ║");
+    Console.WriteLine("║         └───►│  Exec-Server    │  (Tools: Testplan-Ausfuehrung)                ║");
+    Console.WriteLine("║              └─────────────────┘                                                ║");
+    Console.WriteLine("║                                                                                 ║");
+    Console.WriteLine("╚════════════════════════════════════════════════════════════════════════════════╝");
 }
 
-static string ExtractText(IEnumerable<AIContent> content)
+static void PrintHelp()
 {
-    var sb = new StringBuilder();
-    foreach (var t in content.OfType<TextContent>())
-    {
-        sb.AppendLine(t.Text);
-    }
-    if (sb.Length > 0) return sb.ToString();
-
-    foreach (var item in content)
-    {
-        sb.AppendLine(JsonSerializer.Serialize(item, new JsonSerializerOptions { WriteIndented = true }));
-    }
-    return sb.ToString();
-}
-
-static async Task<string?> PickIssueSearchToolAsync(McpClient ghClient)
-{
-    var tools = await ghClient.ListToolsAsync();
-    var preferred = new[]
-    {
-        "issues.search",
-        "github.issues.search",
-        "search_issues",
-        "searchIssues",
-        "issues.list",
-        "list_issues"
-    };
-
-    var match = tools.FirstOrDefault(t =>
-        preferred.Any(p => string.Equals(p, t.Name, StringComparison.OrdinalIgnoreCase)));
-
-    if (match != null) return match.Name;
-
-    return tools.FirstOrDefault(t => t.Name.Contains("issue", StringComparison.OrdinalIgnoreCase))?.Name;
-}
-
-static Dictionary<string, object?> BuildIssueSearchArgs(string query)
-{
-    var args = new Dictionary<string, object?>();
-    args["query"] = query;
-    args["q"] = query;
-    return args;
-}
-
-static async Task ListGitHubTools(McpClient ghClient)
-{
-    var tools = await ghClient.ListToolsAsync();
-    Console.WriteLine("GitHub-Tools:");
-    foreach (var t in tools)
-    {
-        Console.WriteLine($"- {t.Name} : {t.Description}");
-    }
-}
-
-static void Log(string message)
-{
-    Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {message}");
+    Console.WriteLine("Commands:");
+    Console.WriteLine("  :help   - Diese Hilfe");
+    Console.WriteLine("  :exit   - Beenden");
+    Console.WriteLine("  :plans  - Testplaene direkt vom Plan-Server abrufen");
+    Console.WriteLine("  :tools  - Tools direkt vom Exec-Server abrufen");
+    Console.WriteLine();
+    Console.WriteLine("LLM-first Beispiele (ein Aufruf -> automatisch beide Server):");
+    Console.WriteLine("  'Welche Testplaene gibt es?'");
+    Console.WriteLine("  'Zeige mir den google-news Plan'");
+    Console.WriteLine("  'Fuehre den google-news Test aus'");
+    Console.WriteLine("  'Liste die Plaene, lies google-news und fuehre ihn aus'");
 }

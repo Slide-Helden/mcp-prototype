@@ -1,79 +1,38 @@
-Demo 07: Multi-Server-Orchestrierung
-=====================================
-Fortgeschritten | Zwei Server
+Demo 07: Multi-Server LLM-first Orchestrierung
+==============================================
+Fortgeschritten | Zwei Server | LLM-first
 
-WAS WIR ZEIGEN: Ein Client kann mehrere MCP-Server gleichzeitig nutzen.
-Hier: Katalog (Plaene) + Executor (Ausfuehrung)
+WAS WIR ZEIGEN: Ein Befehl -> LLM orchestriert automatisch BEIDE MCP-Server.
 
 ARCHITEKTUR:
-┌────────────┐     ┌─────────────────┐
-│  CLIENT    │────►│  Plan-Server    │  (Plaene lesen) Port 5000
-│            │     └─────────────────┘
-│            │     ┌─────────────────┐
-│            │────►│  Exec-Server    │  (Plaene ausfuehren) Port 5001
-└────────────┘     └─────────────────┘
+              +------------------+
+         +--->|  Plan-Server     |  Port 5000 (Resources)
+         |    +------------------+
+    +----+----+
+    |   LLM   |
+    +----+----+
+         |    +------------------+
+         +--->|  Exec-Server     |  Port 5001 (Tools)
+              +------------------+
 
-VERFUEGBARE MCP-BAUSTEINE:
-- Plan-Server (5000): Resources tests/catalog, tests/plan/{slug}
-- Executor-Server (5001): Tools tests.list, tests.run
-
-VORBEREITUNG (ZWEI TERMINALS + CLIENT)
---------------------------------------
-Terminal 1: cd 07/plan-server && dotnet run  (Port 5000 - Plan-Server)
-Terminal 2: cd 07/exec-server && dotnet run  (Port 5001 - Executor)
+VORBEREITUNG (3 Terminals)
+--------------------------
+Terminal 1: cd 07/plan-server && dotnet run
+Terminal 2: cd 07/exec-server && dotnet run
 Terminal 3: cd 07/client && dotnet run
 
-KEIN LLM NOETIG.
+DEMO
+----
+> Fuehre den google-news Test aus
 
-SCHRITT-FUER-SCHRITT (MENUE-BASIERT)
-------------------------------------
+Das LLM:
+1. Fragt Plan-Server nach Katalog
+2. Liest Plan-Details vom Plan-Server
+3. Fuehrt Test auf Exec-Server aus
 
-1. PLAENE LISTEN (Plan-Server)
-   Taste: 3 (Plaene listen)
-
-   -> Zeige: Client ruft Plan-Server auf
-   -> Erklaere: Erster MCP-Server im Verbund
-
-2. PLAN LESEN
-   Taste: 4 (Plan lesen)
-   Eingabe: google-news
-
-   -> Zeige: Resource tests/plan/google-news vom Plan-Server
-   -> Erklaere: Plan ist nur Beschreibung
-
-3. PLAN AUSFUEHREN (Exec-Server)
-   Taste: 5 (Plan ausfuehren)
-
-   -> Zeige: Tool tests.run auf Executor-Server
-   -> Erklaere: Zweiter Server fuehrt tatsaechlich aus!
-   -> Zeige: Ergebnis der HTTP-Requests
-
-4. EXECUTOR-TOOLS ANZEIGEN
-   Taste: 6 (Executor-Tools listen)
-
-   -> Zeige: tools/list auf Executor-Server
-   -> Erklaere: Jeder Server hat eigene Tools
-
-FLOW ZUSAMMENFASSUNG
---------------------
-1. Katalog: Testplan nachschlagen (Plan-Server)
-2. Executor: Plan ausfuehren, Ergebnis pruefen (Exec-Server)
+Ein Befehl. Zwei Server. Automatisch.
 
 KERNAUSSAGE
 -----------
-"Ein Client, mehrere Server.
- Jeder Server hat seine Verantwortung.
- Das ist die Skalierung mit MCP."
-
-GESAMTUEBERSICHT ALLER DEMOS
-----------------------------
-Demo 01: LLM-first Einstieg
-Demo 02: LLM-first + Dokumente
-Demo 03: Orchestrator-first (Kontrast)
-Demo 04: Live-Trace (Transparenz + Protokoll-Details)
-Demo 05: MCP ohne KI
-Demo 06: Server als reiner Katalog
-Demo 07: Multi-Server (dieser Abschluss)
-
-"Von 'Hello World' bis Enterprise-Architektur -
- MCP skaliert mit den Anforderungen."
+"MCP ermoeglicht AI-gesteuerte Multi-Server-Orchestrierung.
+ Das LLM entscheidet den Workflow - nicht der Entwickler."

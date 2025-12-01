@@ -1,22 +1,24 @@
 using Microsoft.AspNetCore.HttpLogging;
 using TestPlanExecutor;
 
-static void Log(string message) => Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {message}");
+// ---------- Logging konfigurieren ----------
+var logLevel = LogLevel.Debug; // hier Loglevel aendern (Trace fuer JSON-RPC Details)
 
 var builder = WebApplication.CreateBuilder(args);
 
 var url = Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:5001";
 builder.WebHost.UseUrls(url);
-Log($"[Server] Configuring on {url}...");
 
-// Logging mit Timestamps konfigurieren
+// Logging mit Timestamps und konfigurierbarem Level
 builder.Logging.ClearProviders();
 builder.Logging.AddSimpleConsole(options =>
 {
     options.TimestampFormat = "[HH:mm:ss.fff] ";
     options.SingleLine = true;
+    options.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Enabled;
 });
-builder.Logging.SetMinimumLevel(LogLevel.Information);
+builder.Logging.SetMinimumLevel(logLevel);
+builder.Logging.AddFilter("ModelContextProtocol", logLevel);
 
 builder.Services.AddHttpClient<TestPlanRunner>(client =>
 {
@@ -48,11 +50,11 @@ app.MapGet("/health", () => Results.Ok(new
     status = "ok",
     plans = new[] { "google-news" },
     sse = "/sse",
-    note = "Dies ist der Ausfuehrungs-Server fuer Testplaene."
+    note = "Exec-Server fuer Testplan-Ausfuehrung"
 }));
 
-Log($"[Server] Demo 07 - Exec-Server (Ausfuehrung) gestartet");
-Log($"[Server] MCP SSE Endpunkt: {url}/sse");
-Log($"[Server] Health Check: {url}/health");
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("Demo 07 - Exec-Server (nur Tools) gestartet");
+logger.LogInformation("MCP SSE Endpunkt: {Url}/sse", url);
 
 app.Run();
