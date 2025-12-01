@@ -1,0 +1,38 @@
+Demo 07: Multi-Server LLM-first Orchestrierung
+==============================================
+Fortgeschritten | Zwei Server | LLM-first
+
+WAS WIR ZEIGEN: Ein Befehl -> LLM orchestriert automatisch BEIDE MCP-Server.
+
+ARCHITEKTUR:
+              +------------------+
+         +--->|  Plan-Server     |  Port 5000 (Resources)
+         |    +------------------+
+    +----+----+
+    |   LLM   |
+    +----+----+
+         |    +------------------+
+         +--->|  Exec-Server     |  Port 5001 (Tools)
+              +------------------+
+
+VORBEREITUNG (3 Terminals)
+--------------------------
+Terminal 1: cd 07/plan-server && dotnet run
+Terminal 2: cd 07/exec-server && dotnet run
+Terminal 3: cd 07/client && dotnet run
+
+DEMO
+----
+> Fuehre den google-news Test aus
+
+Das LLM:
+1. Fragt Plan-Server nach Katalog
+2. Liest Plan-Details vom Plan-Server
+3. Fuehrt Test auf Exec-Server aus
+
+Ein Befehl. Zwei Server. Automatisch.
+
+KERNAUSSAGE
+-----------
+"MCP ermoeglicht AI-gesteuerte Multi-Server-Orchestrierung.
+ Das LLM entscheidet den Workflow - nicht der Entwickler."

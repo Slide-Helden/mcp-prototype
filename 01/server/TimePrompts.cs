@@ -25,6 +25,7 @@ public static class TimePrompts
         string? timezone = null,
         string? request = null)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Prompt] time.prepare_response aufgerufen (timezone={timezone ?? "default"})");
         var tz = string.IsNullOrWhiteSpace(timezone) ? "UTC" : timezone.Trim();
         var focus = string.IsNullOrWhiteSpace(request)
             ? "Liefere eine freundliche Antwort mit konkreter Zeitangabe."
@@ -43,6 +44,7 @@ public static class TimePrompts
     [Description("Erzeugt einen Prompt, der den Agenten zu einem strukturierten Steckbrief incl. Zeitzonen-Hinweisen anleitet.")]
     public static IEnumerable<ChatMessage> CityBriefing(string city, string? scenario = null)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Prompt] time.city_briefing aufgerufen (city={city ?? "default"})");
         var cityLabel = string.IsNullOrWhiteSpace(city) ? "Berlin" : city.Trim();
         var mission = string.IsNullOrWhiteSpace(scenario)
             ? "Erstelle einen praegnanten Ueberblick fuer Reisende."

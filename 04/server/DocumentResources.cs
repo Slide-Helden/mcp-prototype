@@ -23,6 +23,7 @@ public static class DocumentResources
     [Description("Listet alle verfuegbaren Dokumente mit Tags und Inhaltsvorschau auf.")]
     public static string Catalog(DocumentCatalog catalog)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Resource] docs/catalog gelesen");
         var builder = new StringBuilder();
         builder.AppendLine("# Dokumenten-Katalog");
         builder.AppendLine();
@@ -49,6 +50,7 @@ public static class DocumentResources
     [Description("Gibt den reinen Text eines Dokuments zurueck.")]
     public static string Document(string id, DocumentCatalog catalog)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Resource] docs/document/{id} gelesen");
         var doc = catalog.TryGet(id);
         if (doc is null)
         {
@@ -66,6 +68,7 @@ public static class DocumentResources
     [Description("Liefert Metadaten und eine Kurzzusammenfassung als JSON.")]
     public static string Summary(string id, DocumentCatalog catalog)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Resource] docs/summary/{id} gelesen");
         var doc = catalog.TryGet(id);
         if (doc is null)
         {

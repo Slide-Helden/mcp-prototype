@@ -1,9 +1,21 @@
 using OperatorServer;
 
+static void Log(string message) => Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {message}");
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls(
-    Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:5400");
+// Logging mit Timestamps konfigurieren
+builder.Logging.ClearProviders();
+builder.Logging.AddSimpleConsole(options =>
+{
+    options.TimestampFormat = "[HH:mm:ss.fff] ";
+    options.SingleLine = true;
+});
+builder.Logging.SetMinimumLevel(LogLevel.Information);
+
+var url = Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:5000";
+builder.WebHost.UseUrls(url);
+Log($"[Server] Configuring on {url}...");
 
 builder.Services.AddSingleton<DocumentCatalog>();
 
@@ -23,5 +35,9 @@ app.MapGet("/health", (DocumentCatalog catalog) => Results.Ok(new
     documents = catalog.List().Count,
     sse = "/sse"
 }));
+
+Log($"[Server] Demo 03 - Orchestrator-Server gestartet");
+Log($"[Server] MCP SSE Endpunkt: {url}/sse");
+Log($"[Server] Health Check: {url}/health");
 
 app.Run();

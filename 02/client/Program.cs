@@ -17,20 +17,20 @@ using AIFunction = Microsoft.Extensions.AI.AIFunction;
 
 // ---------- 1) Chat-Client (Ollama / OpenAI kompatibel) ----------
 
-/*
     //cloud beispiel    
 
     var endpoint = Environment.GetEnvironmentVariable("OLLAMA_OPENAI_ENDPOINT");
     var modelId = Environment.GetEnvironmentVariable("OLLAMA_MODEL");
     var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-*/
+
  
 
 // lokales beispiel
-
+/*
 var endpoint = "http://localhost:11434/v1";
 var modelId = "gpt-oss:20b";
 var apiKey = "ollama";
+*/
 
 IChatClient chat =
     new ChatClientBuilder(
@@ -43,30 +43,39 @@ IChatClient chat =
     .UseFunctionInvocation()
     .Build();
 
-Console.WriteLine($"[Chat] Using model: {modelId} @ {endpoint}");
+Log($"[Chat] Using model: {modelId} @ {endpoint}");
 Console.WriteLine();
 
 // ---------- 2) MCP-Client zum Dokumenten-Server ----------
 
-var url = "http://localhost:5200/sse";
-IMcpClient mcpClient = await McpClientFactory.CreateAsync(
-    new SseClientTransport(new()
+var url = "http://localhost:5000/sse";
+Log($"[MCP] Connecting to {url}...");
+var mcpClient = await McpClient.CreateAsync(
+    new HttpClientTransport(new HttpClientTransportOptions
     {
         Name = "Document HTTP Server",
         Endpoint = new Uri(url)
     }));
 
-Console.WriteLine("[MCP] Connected to Document server.");
+Log("[MCP] Connected to Document server.");
 Console.WriteLine();
 
 // ---------- 3) Inventory: Tools, Prompts, Resources ----------
 
-IList<McpClientTool> serverTools = await mcpClient.ListToolsAsync();
+var serverTools = await mcpClient.ListToolsAsync();
 var serverPrompts = await mcpClient.ListPromptsAsync();
 var directResources = await mcpClient.ListResourcesAsync();
 var resourceTemplates = await mcpClient.ListResourceTemplatesAsync();
 
-Console.WriteLine($"[MCP] {serverTools.Count} Tool(s), {serverPrompts.Count} Prompt(s), {directResources.Count} Resource(s), {resourceTemplates.Count} Template(s).");
+Log($"[MCP] {serverTools.Count} Tool(s), {serverPrompts.Count} Prompt(s), {directResources.Count} Resource(s), {resourceTemplates.Count} Template(s).");
+if (serverTools.Count > 0)
+    Log($"[MCP]   Tools: {string.Join(", ", serverTools.Select(t => t.Name))}");
+if (serverPrompts.Count > 0)
+    Log($"[MCP]   Prompts: {string.Join(", ", serverPrompts.Select(p => p.Name))}");
+if (directResources.Count > 0)
+    Log($"[MCP]   Resources: {string.Join(", ", directResources.Select(r => r.Uri))}");
+if (resourceTemplates.Count > 0)
+    Log($"[MCP]   Templates: {string.Join(", ", resourceTemplates.Select(t => t.UriTemplate))}");
 Console.WriteLine("      Commands: :tools, :prompts, :resources, :prompt <name>, :read <uri>");
 Console.WriteLine();
 
@@ -217,7 +226,7 @@ while (true)
 
         var aiArgs = ParseArgs(argsJson);
         var promptResult = await mcpClient.GetPromptAsync(promptName, aiArgs);
-        IList<AIChatMessage> promptMsgs = promptResult.ToChatMessages();
+        var promptMsgs = promptResult.ToChatMessages();
 
         var updates = new List<ChatResponseUpdate>();
         await foreach (var update in chat.GetStreamingResponseAsync(
@@ -319,6 +328,11 @@ static IReadOnlyDictionary<string, object?> ParseArgs(string json)
             JsonValueKind.Array => JsonSerializer.Deserialize<List<object?>>(el.GetRawText()),
             _ => el.GetRawText()
         };
+}
+
+static void Log(string message)
+{
+    Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {message}");
 }
 
 static void PrintHelp()

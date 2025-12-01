@@ -1,17 +1,42 @@
-using System;
-using System.Threading.Tasks;
+using System.Text;
+using System.Text.Json;
 using DocServer;
 using Microsoft.Extensions.AI;
+using Microsoft.AspNetCore.HttpLogging;
 using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 
+static void Log(string message) => Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {message}");
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Standard-Port fuer die Demo (http://localhost:5200)
-builder.WebHost.UseUrls(
-    Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:5200");
+var url = Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://localhost:5000";
+builder.WebHost.UseUrls(url);
+Log($"[Server] Configuring on {url}...");
 
+// Logging mit Timestamps konfigurieren
+builder.Logging.ClearProviders();
+builder.Logging.AddSimpleConsole(options =>
+{
+    options.TimestampFormat = "[HH:mm:ss.fff] ";
+    options.SingleLine = true;
+});
+builder.Logging.SetMinimumLevel(LogLevel.Information);
+
+// Services registrieren
 builder.Services.AddSingleton<DocumentCatalog>();
+builder.Services.AddSingleton<TraceStore>();
+
+// HTTP Logging fuer detaillierte Traces
+builder.Services.AddHttpLogging(o =>
+{
+    o.LoggingFields = HttpLoggingFields.RequestPropertiesAndHeaders
+        | HttpLoggingFields.ResponsePropertiesAndHeaders;
+    o.MediaTypeOptions.AddText("application/json");
+    o.MediaTypeOptions.AddText("text/event-stream");
+    o.RequestBodyLogLimit = 4096;
+    o.ResponseBodyLogLimit = 4096;
+});
 
 builder.Services
     .AddMcpServer()
@@ -23,7 +48,10 @@ builder.Services
     {
         var services = context.Services ?? throw new InvalidOperationException("Service provider unavailable.");
         var catalog = services.GetRequiredService<DocumentCatalog>();
+        var traceStore = services.GetRequiredService<TraceStore>();
         var name = context.Params?.Name ?? string.Empty;
+
+        traceStore.AddMcpRequest("prompts/get", $"name: {name}");
 
         static string Normalize(string value)
         {
@@ -42,6 +70,8 @@ builder.Services
 
         if (document is not null)
         {
+            traceStore.AddMcpResponse("prompts/get", $"Found document: {document.Title}");
+
             return ValueTask.FromResult(PromptFallbackExtensions.CreatePromptResult(
                 new ChatMessage(ChatRole.System,
                     "Du bist ein erfahrener Koch-Assistent. Du hast Zugriff auf eine Rezeptsammlung. " +
@@ -55,21 +85,96 @@ builder.Services
             ));
         }
 
+        traceStore.AddMcpResponse("prompts/get", $"Error: Unknown prompt '{name}'");
         return ValueTask.FromException<GetPromptResult>(new McpException($"Unknown prompt: '{name}'"));
     });
 
 var app = builder.Build();
 
-app.MapGet("/health", (DocumentCatalog catalog) => Results.Ok(new
+// Trace-Middleware: Erfasst alle HTTP-Anfragen und MCP JSON-RPC Nachrichten
+app.Use(async (ctx, next) =>
 {
-    status = "ok",
-    documents = catalog.List().Count,
-    sse = "/sse"
-}));
+    var store = ctx.RequestServices.GetRequiredService<TraceStore>();
+    var path = ctx.Request.Path.ToString();
+
+    // Request Body lesen und tracen
+    string body = string.Empty;
+    if (ctx.Request.ContentLength > 0 && ctx.Request.Body.CanRead)
+    {
+        ctx.Request.EnableBuffering();
+        using var reader = new StreamReader(ctx.Request.Body, Encoding.UTF8, leaveOpen: true);
+        body = await reader.ReadToEndAsync();
+        ctx.Request.Body.Position = 0;
+    }
+
+    // HTTP Request tracen
+    store.AddRequest(ctx.Request.Method, path + ctx.Request.QueryString, body);
+
+    // MCP JSON-RPC spezifisch parsen
+    if (!string.IsNullOrWhiteSpace(body) && body.TrimStart().StartsWith('{'))
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(body);
+            if (doc.RootElement.TryGetProperty("method", out var methodProp))
+            {
+                var method = methodProp.GetString() ?? "unknown";
+                var paramsStr = doc.RootElement.TryGetProperty("params", out var paramsProp)
+                    ? paramsProp.ToString()
+                    : null;
+                store.AddMcpRequest(method, paramsStr);
+            }
+        }
+        catch { /* nicht-JSON oder parse fehler - ignorieren */ }
+    }
+
+    await next.Invoke();
+
+    // Response tracen
+    store.AddResponse(ctx.Response.StatusCode, ctx.Response.ContentType);
+});
+
+app.UseHttpLogging();
+
+app.MapGet("/health", (DocumentCatalog catalog, TraceStore traceStore) =>
+{
+    traceStore.Add(TraceDirection.Internal, "SYS", "Health check aufgerufen", null);
+    return Results.Ok(new
+    {
+        status = "ok",
+        documents = catalog.List().Count,
+        sse = "/sse",
+        trace = "/trace/logs",
+        traceMarkdown = "/trace/logs/markdown"
+    });
+});
 
 app.MapGet("/documents", (DocumentCatalog catalog) =>
     Results.Ok(catalog.List().Select(doc => doc.ToSummaryDto())));
 
+// Direkter HTTP-Zugang zu Traces (ohne MCP)
+app.MapGet("/trace/logs", (TraceStore store) => Results.Text(store.Dump(), "text/plain"));
+app.MapGet("/trace/logs/markdown", (TraceStore store) => Results.Text(store.DumpMarkdown(), "text/markdown"));
+
 app.MapMcp();
+
+Log("[Server] Demo 04 - Rezept-Server mit Live Trace gestartet");
+Console.WriteLine("╔════════════════════════════════════════════════════════════════════════════════╗");
+Console.WriteLine("║           Demo 04: Rezept-Server mit MCP Communication Trace                  ║");
+Console.WriteLine("╠════════════════════════════════════════════════════════════════════════════════╣");
+Console.WriteLine($"║ Endpunkte:                                                                     ║");
+Console.WriteLine($"║   - MCP SSE:        {url}/sse                                  ║");
+Console.WriteLine($"║   - Health:         {url}/health                               ║");
+Console.WriteLine($"║   - Trace (Text):   {url}/trace/logs                           ║");
+Console.WriteLine($"║   - Trace (MD):     {url}/trace/logs/markdown                  ║");
+Console.WriteLine("║                                                                                 ║");
+Console.WriteLine("║ MCP Resources:                                                                  ║");
+Console.WriteLine("║   - trace/logs          - Trace als formatierter Text                          ║");
+Console.WriteLine("║   - trace/logs/markdown - Trace als Markdown-Tabelle                           ║");
+Console.WriteLine("║                                                                                 ║");
+Console.WriteLine("║ MCP Tools:                                                                      ║");
+Console.WriteLine("║   - trace.stats   - Statistiken zur Kommunikation                              ║");
+Console.WriteLine("║   - trace.clear   - Trace-Markierung setzen                                    ║");
+Console.WriteLine("╚════════════════════════════════════════════════════════════════════════════════╝");
 
 app.Run();

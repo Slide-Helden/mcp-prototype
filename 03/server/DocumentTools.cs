@@ -14,6 +14,7 @@ public static class DocumentTools
         [Description("Suchbegriff fuer Volltext und Tags.")] string keyword,
         DocumentCatalog catalog)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Tool] manual.docs.search aufgerufen (keyword={keyword ?? "null"})");
         return catalog.Search(keyword)
             .Select(doc => new
             {

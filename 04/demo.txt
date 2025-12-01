@@ -1,40 +1,100 @@
-Rezept-Demo (04) - Ablauf
-=========================
+Demo 04: Live Communication Trace
+==================================
+Aufbauend auf Demo 01-03 | +Transparenz | +Protokoll-Details
 
-Vorbereitung:
-- Server (DocServer) starten, danach Client (`dotnet run` in DocHostApp).
+WAS WIR ZEIGEN: Die MCP-Kommunikation zwischen Client, Server und LLM
+wird in Echtzeit sichtbar. Man sieht jeden Request live.
 
-Befehlsabfolge im Client-REPL:
+NEU GEGENUEBER DEMO 01-03:
+- Echtes SDK-Logging zeigt MCP-Protokoll-Details
+- JSON-RPC Payloads werden sichtbar
+- Konfigurierbare Log-Level (Debug, Trace)
 
-1. System-Check
-   ----------------
-   1. :tools
-   2. :resources
-   3. Freier Prompt: "Hallo! Wer bist du und wie kannst du mir beim Kochen helfen?"
-      (Prüft, ob die "Koch-Persona" (System Prompt) korrekt geladen ist.)
+USE-CASE: Koch-Assistent mit Rezeptkatalog
 
-2. Die Katalog-Methode
-   --------------------------------------
-   4. :read docs/catalog
-   5. Freier Prompt: "Ich möchte Nudeln essen. Schau in deinen Katalog und sag mir, welche Rezepte dazu passen."
+VERFUEGBARE MCP-BAUSTEINE:
+- Tools: docs.search, docs.random, trace.stats, trace.clear
+- Resources: docs/catalog, docs/document/{id}, trace/logs
+- Rezepte: Gnocchi Pesto Genovese, Tomatensuppe, Carbonara, Lasagne, u.v.m.
 
-3. Detail-Abruf & Anleitung
-   ------------------------
-   6. Freier Prompt: "Das klingt gut. Wie mache ich die Gnocchi? Lies das Rezept und leite mich an."
-   7. :read docs/document/recipe_gnocchi_pesto_genovese
+VORBEREITUNG
+------------
+Terminal 1: cd 04/server && dotnet run
+Terminal 2: cd 04/client && dotnet run
 
-4. Der "Kühlschrank-Test" (Inferenz)
-   ---------------------------------
-   8. Freier Prompt: "Ich habe noch Sahne und Eier übrig. Welches Rezept aus deiner Liste könnte ich damit kochen?"
+Server laeuft auf http://localhost:5000/sse
 
-5. Vergleich & Analyse (Multi-File)
-   --------------------------------
-   9. Freier Prompt: "Ich schwanke zwischen den Gnocchi und der Tomatensuppe. Welches Gericht hat weniger Zutaten?"
+LOG-LEVEL ANPASSEN (Program.cs Zeile 19)
+----------------------------------------
+var logLevel = LogLevel.Debug;    // Standard: Wichtige Infos
+var logLevel = LogLevel.Trace;    // Deep-Dive: Zeigt JSON-RPC Payloads!
 
-6. Kontext & Gedächtnis
-   --------------------
-   10. Freier Prompt: "Erstelle mir eine Einkaufsliste für die Gnocchi, aber rechne die Mengen für die doppelte Personenanzahl hoch."
+TIPP FUER DEMO: Mit LogLevel.Trace sieht man die kompletten
+JSON-RPC Requests/Responses - ideal um das Protokoll zu erklaeren.
 
-7. Negative Tests (Halluzination vermeiden)
-   ----------------------------------------
-   11. Freier Prompt: "Wie mache ich Sushi?"
+SCHRITT-FUER-SCHRITT
+--------------------
+
+1. EINSTIEG - Rezepte erkunden
+   Eingabe: Welche Rezepte hast du?
+
+   -> SDK-Logging zeigt:
+      - MCP resources/list Request
+      - JSON-RPC Payload (bei Trace-Level)
+      - Tool-Aufrufe des LLM
+
+   -> Erklaere: Jede Log-Zeile = ein Schritt in der Kommunikation
+
+2. EINZELNES REZEPT
+   Eingabe: Wie mache ich die Gnocchi?
+
+   -> Logging zeigt Tool-Call fuer docs/document/recipe_gnocchi...
+   -> Erklaere: LLM findet ID im Katalog, liest dann das Rezept
+
+3. VERGLEICH (MULTI-TOOL)
+   Eingabe: Vergleiche Gnocchi und Tomatensuppe - welches ist schneller?
+
+   -> Logging zeigt MEHRERE Tool-Calls nacheinander
+   -> Erklaere: LLM orchestriert mehrere Abrufe selbststaendig
+
+4. HALLUZINATIONS-TEST
+   Eingabe: Wie mache ich Sushi?
+
+   -> Logging zeigt: LLM sucht, findet nichts
+   -> Erwartet: Ehrliche Antwort "Kein Sushi-Rezept vorhanden"
+   -> Erklaere: Grounding verhindert Halluzination
+
+5. SERVER-TRACE ANZEIGEN
+   Eingabe: :trace:server
+
+   -> Zeigt die Server-Perspektive: HTTP-Requests, JSON-RPC
+   -> Erklaere: Gleiche Kommunikation, andere Sichtweise
+
+TRACE-BEFEHLE
+-------------
+:trace:server - Server-Trace abrufen
+:trace:stats  - Trace-Statistiken vom Server
+
+PROTOKOLL-DETAILS (bei LogLevel.Trace sichtbar)
+-----------------------------------------------
+Typischer JSON-RPC Request:
+  {"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"docs.search"}}
+
+Protokoll-Elemente:
+- jsonrpc: Protokoll-Version (immer "2.0")
+- id: Request-ID fuer Zuordnung
+- method: MCP-Methode (tools/call, resources/read, etc.)
+- params: Parameter des Aufrufs
+- result: Antwort (bei Erfolg)
+
+KERNAUSSAGE
+-----------
+"Jetzt sehen wir, was 'unter der Haube' passiert:
+ JSON-RPC Aufrufe, HTTP Requests, Tool-Calls.
+ MCP ist JSON-RPC 2.0 ueber HTTP - ein offener Standard."
+
+UEBERLEITUNG ZU DEMO 05
+-----------------------
+"Bisher brauchten wir immer ein LLM.
+ Aber MCP funktioniert auch ohne KI -
+ als reiner Standard-Connector."

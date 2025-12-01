@@ -36,6 +36,7 @@ public static class TimeResources
     [Description("Liefert eine kurze Markdown-Beschreibung, wie Tools, Prompts und Ressourcen zusammenspielen.")]
     public static string About()
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Resource] time/about gelesen");
         return
         """
         # MCP Zeit-Demo
@@ -58,6 +59,7 @@ public static class TimeResources
     [Description("Listet Staedte auf, die zusammen mit dem Resource-Template `time/city/{city}` genutzt werden koennen.")]
     public static string Cities()
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Resource] time/cities gelesen");
         var builder = new StringBuilder();
         builder.AppendLine("# Demo-Staedte");
         builder.AppendLine();
@@ -84,6 +86,7 @@ public static class TimeResources
     [Description("Liefert JSON-Daten zur Stadt inklusive aufgeloester Zeitzone, lokaler Zeit und Beispielaufrufen.")]
     public static string City(string city)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [Resource] time/city/{city} gelesen");
         if (string.IsNullOrWhiteSpace(city))
         {
             return JsonSerializer.Serialize(new
